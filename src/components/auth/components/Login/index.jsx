@@ -2,8 +2,8 @@ import React from 'react';
 
 import '../layout.css';
 
-import LoginForm from './loginForm';
 import LoginBgImage from '../../../../assets/auth/Login.svg';
+import LoginForm from './loginForm';
 import Layout from '../layout';
 
 const Login = () => {
