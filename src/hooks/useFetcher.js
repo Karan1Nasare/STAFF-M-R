@@ -6,7 +6,7 @@ import { useStore } from '../store/context-store';
 const useFetcher = () => {
   const navigate = useNavigate();
   const [state, setState] = useState({});
-  const [, StoreDispatch] = useStore();
+  const [Store, StoreDispatch] = useStore();
 
   const fetcher = async ({
     key,
@@ -29,6 +29,7 @@ const useFetcher = () => {
 
     try {
       const response = await executer();
+      console.log('🚀 ~ useFetcher ~ response:', response.status);
 
       if (response.status === 200) {
         onSuccess?.(response);

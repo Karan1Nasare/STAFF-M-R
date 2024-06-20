@@ -1,8 +1,12 @@
+/* eslint-disable consistent-return */
+/* eslint-disable array-callback-return */
 /* eslint-disable import/no-cycle */
 
 import React, { lazy, useEffect } from 'react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { useStore } from './store/context-store';
+import AuthGuard from './Guards/AuthGuards';
+
 import AddCourse from './components/Course/Course'; // eslint-disable-next-line import/no-named-as-default-member
 import LanguagePage from './components/Language';
 // import AddSuperAdminNotification from './pages/superAdminNotification/addSuperAdminNotification';
@@ -420,43 +424,65 @@ const AppRoutes = [
   },
 ];
 
+export const getRouteByName = name => {
+  return AppRoutes.find(route => route.name === name);
+};
+
 const AppRouter = () => {
   const [Store, StoreDispatch] = useStore();
   useEffect(() => {
     StoreDispatch({ type: 'Log', data: {} });
   }, []);
+
   return (
     <BrowserRouter>
       <div className='main-content'>
         <Routes>
-          {AppRoutes.map((routeObj, routeIdx) =>
-            routeObj.wrapper ? (
-              <Route
-                key={routeIdx}
-                exact
-                path={`${routeObj?.route}`}
-                element={
-                  <routeObj.wrapper>
-                    <routeObj.component />
-                  </routeObj.wrapper>
-                }
-              />
-            ) : (
-              <Route
-                key={routeIdx}
-                path={`${routeObj.route}`}
-                Component={routeObj.component}
-              />
-            ),
-          )}
+          {AppRoutes.map((routeObj, routeIdx) => {
+            if (!routeObj.external) {
+              return routeObj.auth ? (
+                <Route
+                  key={`route-${routeIdx}`}
+                  path={`/`}
+                  element={<AuthGuard />}
+                >
+                  {routeObj.wrapper ? (
+                    <Route
+                      key={routeIdx}
+                      path={`${routeObj.route}`}
+                      element={
+                        <routeObj.wrapper>
+                          <routeObj.component />
+                        </routeObj.wrapper>
+                      }
+                    />
+                  ) : (
+                    <Route
+                      key={routeIdx}
+                      path={`${routeObj.route}`}
+                      element={<routeObj.component />}
+                    />
+                  )}
+                </Route>
+              ) : (
+                <Route
+                  key={routeIdx}
+                  path={`${routeObj.route}`}
+                  element={<routeObj.component />}
+                />
+              );
+            }
+          })}
+          <Route
+            path={`/*`}
+            element={
+              <Navigate to={getRouteByName('dashboard').route} replace />
+            }
+          />
         </Routes>
       </div>
     </BrowserRouter>
   );
-};
-
-export const getRouteByName = name => {
-  return AppRoutes.find(route => route.name === name);
 };
 
 export default AppRouter;

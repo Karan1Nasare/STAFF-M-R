@@ -23,6 +23,7 @@ axiosInstance.interceptors.request.use(
     const newConfig = { ...config };
     if (token) {
       newConfig.headers = {
+        ...newConfig.headers,
         Authorization: `Bearer ${token}`,
       };
     }
@@ -89,6 +90,8 @@ export const APIClient2 = () => {
         newConfig.headers = {
           ...newConfig.headers,
           Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data',
         };
       }
       return newConfig;
