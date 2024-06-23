@@ -3,14 +3,37 @@ import { FaRegUserCircle } from 'react-icons/fa';
 import { IoMdAddCircleOutline } from 'react-icons/io';
 import AddQuestionsInfo from './addQuestionsInfo';
 import BlankAddQuestions from './blankAddQuestions';
+import { useStore } from '../../store/context-store';
 
-const AddQuestionTab = () => {
+const AddQuestionTab = ({ onClose }) => {
+  const [Store, StoreDispatch] = useStore();
   const [activeTab, setActiveTab] = useState(0);
+  const [selectedData, setSelectedData] = useState({
+    course_id: null,
+    subject_id: null,
+    chapter_id: null,
+    title: '',
+    description: '',
+  });
+
+  const onSelectedDataChange = value => {
+    setSelectedData(value);
+    StoreDispatch({
+      type: 'ADD_QUESTION_BANK',
+      payload: selectedData,
+    });
+  };
+
   const tabs = [
     {
       title: 'Basic Info',
       icon: <FaRegUserCircle />,
-      component: <AddQuestionsInfo />,
+      component: (
+        <AddQuestionsInfo
+          selectedData={selectedData}
+          setSelectedData={onSelectedDataChange}
+        />
+      ),
     },
     {
       title: 'Add Questions',
@@ -22,7 +45,11 @@ const AddQuestionTab = () => {
     setActiveTab(index);
   };
   const handlePreviousTab = () => {
-    setActiveTab(prevTab => (prevTab > 0 ? prevTab - 1 : 0));
+    if (activeTab === 0) {
+      onClose();
+    } else {
+      setActiveTab(prevTab => (prevTab > 0 ? prevTab - 1 : 0));
+    }
   };
   const handleNextTab = () => {
     setActiveTab(prevTab =>
@@ -63,7 +90,6 @@ const AddQuestionTab = () => {
           <button
             className='rounded-md bg-white w-24 h-8 text-black hover:bg-primary hover:text-white'
             onClick={handlePreviousTab}
-            disabled={activeTab === 0}
           >
             Previous
           </button>

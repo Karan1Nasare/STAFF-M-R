@@ -10,9 +10,23 @@ const AuthGuard = ({ children, rObj }) => {
   const outlet = useOutlet();
   const [isValid, setValid] = useState(true);
   useEffect(() => {
-    if (!Store?.user?.token) {
+    function onUnAuthorized() {
       StoreDispatch({ type: 'RemoveState' });
       setValid(false);
+    }
+
+    let isAlreadyLoggedIn = false;
+    try {
+      const userData = JSON.parse(localStorage.getItem('last_state'));
+      if (userData?.user) {
+        isAlreadyLoggedIn = true;
+        StoreDispatch({ type: 'signIn', user: userData.user });
+      }
+    } catch (err) {
+      console.log(err);
+    }
+    if (!Store?.user?.token && !isAlreadyLoggedIn) {
+      onUnAuthorized();
     }
   }, [Store?.user?.setupFinished, Store?.user?.token, StoreDispatch]);
 

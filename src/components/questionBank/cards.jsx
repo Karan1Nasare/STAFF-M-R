@@ -1,32 +1,41 @@
 import React, { useState } from 'react';
+import { RiDeleteBin5Fill } from 'react-icons/ri';
+import { FaEye } from 'react-icons/fa';
+import { FiEdit } from 'react-icons/fi';
 import ConfirmDelete from '../ui/Dialog/ConfirmDelete';
 import EditCard from './editCard';
-import MyComponent from './myComponent';
 import PreviewQuestion from './PreviewQuestion';
+import { deleteQuestionBank } from '../../services/exam';
 
-const Cards = ({ cards }) => {
+const Cards = ({ cards, onUpdate }) => {
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const [popup, setPopup] = useState(false);
+  const [clickedId, setClickedId] = useState(null);
 
   const handleClosePreview = () => {
     setPopup(false);
   };
 
-  const handlePopupClick = () => {
+  const handlePopupClick = id => {
+    setClickedId(id);
     setPopup(!popup);
   };
-  const handleEditClick = () => {
+  const handleEditClick = id => {
+    setClickedId(id);
     setIsEdit(!isEdit);
   };
-  const handleDeleteClick = () => {
+  const handleDeleteClick = id => {
+    setClickedId(id);
     setIsDeleteOpen(true);
   };
   const handleCloseDelete = () => {
     setIsDeleteOpen(false);
   };
   const confirmDeleteHandler = () => {
+    deleteQuestionBank(clickedId);
     setIsDeleteOpen(false);
+    onUpdate();
   };
   return (
     <>
@@ -41,28 +50,34 @@ const Cards = ({ cards }) => {
             >
               <div className='flex justify-between'>
                 <div className='text-left'>
-                  <h1 className='text-white text-lg'>{card.name}</h1>
+                  <h1 className='text-white text-lg'>{card.title}</h1>
                   <div className='flex mt-1'>
                     <h3 className='text-grey__primary__light mr-2 text-sm '>
                       Question Count:
                     </h3>
                     <h3 className='bg-success w-10 rounded-full text-sm pl-3 bg-opacity-25 text-success'>
-                      {card.count}
+                      {card.question_bank_details_count}
                     </h3>
                   </div>
                 </div>
                 <div className='flex mt-3 '>
-                  <span onClick={handlePopupClick} className='mr-3 text-white'>
-                    {card.icon1}
-                  </span>
-                  <span onClick={handleEditClick} className='mr-3 text-white'>
-                    {card.icon2}
+                  <span
+                    onClick={() => handlePopupClick(card.id)}
+                    className='mr-3 text-white'
+                  >
+                    <FaEye style={{ fontSize: '1.2em' }} />
                   </span>
                   <span
-                    onClick={handleDeleteClick}
+                    onClick={() => handleEditClick(card.id)}
+                    className='mr-3 text-white'
+                  >
+                    <FiEdit style={{ fontSize: '1.4em' }} />
+                  </span>
+                  <span
+                    onClick={() => handleDeleteClick(card.id)}
                     className='mr-2 text-red-600'
                   >
-                    {card.icon3}
+                    <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />
                   </span>
                 </div>
               </div>

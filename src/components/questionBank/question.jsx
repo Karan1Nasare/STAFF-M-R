@@ -1,18 +1,16 @@
-import React, { useState } from 'react';
-import { MdOutlineSegment } from 'react-icons/md';
+import React, { useEffect, useState } from 'react';
 import { TiUserAdd } from 'react-icons/ti';
-import { RiArrowDropDownLine, RiDeleteBin5Fill } from 'react-icons/ri';
-import { FaEye } from 'react-icons/fa';
-import { FiEdit } from 'react-icons/fi';
 import { Icon } from '@iconify/react';
 import Cards from './cards';
 import AddQuestionTab from './addQuestionTab';
 import Dropdown from '../shared/DropDown';
+import { getAllQuestionBanks } from '../../services/exam';
 
 const Question = () => {
   const [inputValue, setInputValue] = useState('');
-  const [filteredCards, setFilteredCards] = useState(null);
   const [isAddQuestionClicked, setisAddQuestionClicked] = useState(false);
+  const [cards, setCards] = useState([]);
+
   const handleAddQuestionBankClick = () => {
     console.log('Select Standard');
   };
@@ -32,80 +30,24 @@ const Question = () => {
     useState('Select Chapter');
   const topicOptions = ['Topic 1', 'Topic 1', 'Topic 1', 'Topic 1'];
   const [selectTopicOption, setSelectTopicOption] = useState('Select Topic');
-  const cards = [
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-    {
-      name: 'Topic Name',
-      count: '50',
-      icon1: <FaEye style={{ fontSize: '1.2em' }} />,
-      icon2: <FiEdit style={{ fontSize: '1.4em' }} />,
-      icon3: <RiDeleteBin5Fill style={{ fontSize: '1.5em' }} />,
-    },
-  ];
   const handleSearchClick = () => {
     const filtered = cards.filter(card =>
       card.name.toLowerCase().includes(inputValue.toLowerCase()),
     );
-    setFilteredCards(filtered);
-    if (filtered.length === 0) {
-      setFilteredCards([]);
+  };
+
+  const onFilterChange = async () => {
+    const result = await getAllQuestionBanks('');
+    const questionBanks = result.data?.data?.data;
+    if (questionBanks?.length) {
+      setCards(questionBanks);
     }
   };
+
+  useEffect(() => {
+    onFilterChange();
+  }, []);
+
   const handleInputChange = e => {
     setInputValue(e.target.value);
   };
@@ -178,10 +120,10 @@ const Question = () => {
               </div>
             </div>
           </div>
-          <Cards cards={filteredCards || cards} />
+          <Cards cards={cards} onUpdate={onFilterChange} />
         </div>
       ) : (
-        <AddQuestionTab />
+        <AddQuestionTab onClose={() => setisAddQuestionClicked(false)} />
       )}
     </>
   );

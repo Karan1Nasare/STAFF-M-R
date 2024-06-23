@@ -35,7 +35,7 @@ export const ContextStoreProvider = ({ children }) => {
       case 'signIn': {
         const state = { ...State };
         state.user = action.user;
-        localStorage.setItem('last_state', JSON.stringify(State));
+        localStorage.setItem('last_state', JSON.stringify(state));
         return state;
       }
 
@@ -59,7 +59,7 @@ export const ContextStoreProvider = ({ children }) => {
       case 'ADD_QUESTION_BANK': {
         return {
           ...State,
-          questionBanks: [...State.questionBanks, action?.payload],
+          questionBanks: [action?.payload],
         };
       }
       case 'AddAdminDetails': {

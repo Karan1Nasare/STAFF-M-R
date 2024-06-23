@@ -3,9 +3,10 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import './styles/styles.css';
 
-const RichTextEditor = () => {
+const RichTextEditor = ({ onChange }) => {
   return (
     <CKEditor
+      onChange={onChange}
       editor={ClassicEditor}
       //   data={editorData}
       //   onChange={handleChange}
