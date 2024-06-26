@@ -13,6 +13,7 @@ const MrDropzone = ({
   imgIcon,
   uploadMetadata,
 }) => {
+  console.log('files', files);
   const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
     onDrop,
     accept: {

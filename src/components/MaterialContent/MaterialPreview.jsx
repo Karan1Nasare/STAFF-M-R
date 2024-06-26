@@ -16,7 +16,19 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />;
 });
 const MaterialPreview = props => {
-  const { open, handleClose } = props;
+  const {
+    open,
+    handleClose,
+    videoFile,
+    imageFile,
+    questionBankFile,
+    documentFile,
+    threeDModel,
+    thumbnailImage,
+    thumbnailVideo,
+    title,
+    description,
+  } = props;
   return (
     <React.Fragment>
       <Dialog
@@ -41,8 +53,18 @@ const MaterialPreview = props => {
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <DialogContent>
-          <PreviewAccordion />
+        <DialogContent className='w-full p-0'>
+          <PreviewAccordion
+            videoFile={videoFile}
+            imageFile={imageFile}
+            questionBankFile={questionBankFile}
+            documentFile={documentFile}
+            threeDModel={threeDModel}
+            thumbnailImage={thumbnailImage}
+            thumbnailVideo={thumbnailVideo}
+            title={title}
+            description={description}
+          />
         </DialogContent>
       </Dialog>
     </React.Fragment>

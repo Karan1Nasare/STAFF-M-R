@@ -5,32 +5,23 @@ import { Grid, Stack } from '@mui/material';
 import PATH_DASHBOARD from '../../../routes/path';
 import TextField from '../../shared/input/TextField';
 import MenuItem from '../../shared/menuitem/MenuItem';
+import useCourseStd from '../hooks/useCourseStd';
+import useSubject from '../hooks/useSubject';
 
-const SelectSubject = [
-  {
-    label: 'Subject  1',
-    value: '1',
-  },
-  {
-    label: 'Subject  2',
-    value: '2',
-  },
-  {
-    label: 'Subject  3',
-    value: '3',
-  },
-  {
-    label: 'Subject  4',
-    value: '4',
-  },
-];
 const SubjectFilterApply = () => {
-  const [filters, setFilters] = useState({
-    name: '',
-    Chapter: '',
-    Subject: '',
-    Standard: '',
-  });
+  const { courseStdList } = useCourseStd();
+  const { setSearchTerm } = useSubject();
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = e => {
+    setInputValue(e.target.value);
+  };
+
+  const handleKeyPress = e => {
+    if (e.key === 'Enter') {
+      setSearchTerm(inputValue);
+    }
+  };
   const navigate = useNavigate();
 
   return (
@@ -42,6 +33,9 @@ const SubjectFilterApply = () => {
             type='text'
             placeholder='Search Name, Enrollment, Standard'
             className='px-3 py-3 w-full h-full  bg-secondary__fill__dark   text-white rounded-md'
+            value={inputValue}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
           />
         </Grid>
         <Grid item sm={6} md={3} xs={12}>
@@ -52,11 +46,13 @@ const SubjectFilterApply = () => {
               textAlign: 'left',
               padding: '1px',
             }}
-            defaultValue='1'
           >
-            {SelectSubject?.map((option, i) => (
-              <MenuItem key={i} value={option?.value}>
-                {option.label}
+            <MenuItem value='' disabled>
+              Select Standard
+            </MenuItem>
+            {courseStdList?.map((option, i) => (
+              <MenuItem key={i} value={i}>
+                {option?.name}
               </MenuItem>
             ))}
           </TextField>

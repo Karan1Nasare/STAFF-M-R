@@ -1,3 +1,5 @@
+/* eslint-disable import/no-cycle */
+
 import React, { useState } from 'react';
 import ContentFilterApply from '../../components/Material/Filters/ContentFilterApply';
 import CourseFilterApply from '../../components/Material/Filters/CourseFilterApply';
@@ -8,41 +10,45 @@ import ContentTabs from '../../components/Material/Tabs/ContentTabs';
 import CourseStdTab from '../../components/Material/Tabs/CourseStdTab';
 import SubjectTabs from '../../components/Material/Tabs/SubjectTabs';
 import ChapterTabs from '../../components/Material/Tabs/ChapterTabs';
-
-const MaterialTab = activeTab => {
-  const tabs = {
-    content: <ContentTabs />,
-    course: <CourseStdTab />,
-    subject: <SubjectTabs />,
-    chapter: <ChapterTabs />,
-  };
-
-  return tabs[activeTab];
-};
-
-const MaterialFilterComponent = activeTab => {
-  const tabs = {
-    content: <ContentFilterApply />,
-    course: <CourseFilterApply />,
-    subject: <SubjectFilterApply />,
-    chapter: <ChapterFilterApply />,
-  };
-
-  return tabs[activeTab];
-};
+import useCourseStd from '../../components/Material/hooks/useCourseStd';
+import useSubject from '../../components/Material/hooks/useSubject';
+import useChapter from '../../components/Material/hooks/useChapter';
 
 const MaterialPage = () => {
   const [tab, setTab] = useState('course');
+
+  const MaterialTab = activeTab => {
+    const tabs = {
+      content: <ContentTabs />,
+      course: <CourseStdTab />,
+      subject: <SubjectTabs />,
+      chapter: <ChapterTabs />,
+    };
+
+    return tabs[activeTab];
+  };
+
+  const MaterialFilterComponent = activeTab => {
+    const tabs = {
+      content: <ContentFilterApply />,
+      course: <CourseFilterApply />,
+      subject: <SubjectFilterApply />,
+      chapter: <ChapterFilterApply />,
+    };
+
+    return tabs[activeTab];
+  };
 
   return (
     <>
       <div
         className='w-full'
         style={{
-          height: '100%', // Ensure container takes full viewport height
+          height: '100vh', // Ensure container takes full viewport height
           display: 'flex',
           flexDirection: 'column',
-          overflowY: 'hidden',
+          overflowY: 'hidden', // Disable container-level overflow
+          MaterialTab,
         }}
       >
         <div className='w-max mb-6'>

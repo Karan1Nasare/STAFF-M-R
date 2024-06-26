@@ -1,23 +1,17 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import * as React from 'react';
+import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogContent from '@mui/material/DialogContent';
 import Slide from '@mui/material/Slide';
-import { padding, Stack, styled } from '@mui/system';
-import {
-  Divider,
-  Grid,
-  IconButton,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Stack, styled } from '@mui/system';
+import { Divider, IconButton, TextField, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@emotion/react';
 import AddPhotoAlternateIcon from '@mui/icons-material/AddPhotoAlternate';
 import ProfileImage from '../../../assets/images/profile-image.png';
 import TextEditor from '../../ui/TextEditor/TextEditor';
 import RichTextEditor from '../../shared/RichTextEditor';
-import Button from '../../shared/buttons/Button';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />;
@@ -42,45 +36,80 @@ const ImgStyled = styled('img')(({ theme }) => ({
 
 export default function UpdateContentDialog(props) {
   const { open, handleClose, data, updateHandler } = props;
+  console.log('🚀 ~ UpdateContentDialog ~ data:', data);
   const [imgSrc, setImgSrc] = React.useState(ProfileImage);
+  const [changeData, setChangeData] = React.useState({
+    name: '',
+    description: '',
+    image: '',
+  });
   const theme = useTheme();
-  const [inputValue, setInputValue] = React.useState();
-  const [editorValue, setEditorValue] = React.useState(data?.description);
 
   React.useEffect(() => {
     if (open) {
-      setImgSrc(data?.image);
-      setInputValue(data?.content);
+      setImgSrc(data?.image || ProfileImage);
+      setChangeData({
+        name: data?.name || '',
+        description: data?.description || '',
+        image: data?.image || '',
+        _method: 'PUT',
+      });
     }
-  }, [open]);
+  }, [open, data]);
+
+  const handleInputChange = event => {
+    const { name, value } = event.target;
+    setChangeData(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
 
   const handleInputImageChange = file => {
     const reader = new FileReader();
     const { files } = file.target;
     if (files && files.length !== 0) {
-      reader.onload = () => setImgSrc(reader.result);
+      reader.onload = () => {
+        setImgSrc(reader.result);
+        setChangeData(prevState => ({
+          ...prevState,
+          image: files[0],
+        }));
+      };
       reader.readAsDataURL(files[0]);
-
-      if (reader.result !== null) {
-        setInputValue(reader.result);
-      }
     }
+  };
+
+  const handleUpdate = () => {
+    console.log('🚀 ~ handleUpdate ~ formData:', changeData);
+    const formData = new FormData();
+
+    Object.entries(changeData).forEach(([key, value]) => {
+      formData.append(key, value);
+    });
+
+    updateHandler(formData);
   };
 
   return (
     <React.Fragment>
       <Dialog
-        fullWidth={true}
-        maxWidth={'sm'}
         open={open}
         TransitionComponent={Transition}
         keepMounted
         onClose={handleClose}
         aria-describedby='alert-dialog-slide-description'
+        PaperProps={{
+          sx: {
+            width: '42.063rem',
+            height: '36.069rem',
+            borderRadius: '8px',
+          },
+        }}
       >
-        <DialogContent sx={{ overflow: 'hidden' }}>
+        <DialogContent>
           <Stack>
-            <Typography sx={{ color: 'white' }}>Edit {data?.title}</Typography>
+            <Typography sx={{ color: 'white' }}>Edit {data?.name}</Typography>
             <IconButton
               aria-label='close'
               onClick={handleClose}
@@ -91,19 +120,20 @@ export default function UpdateContentDialog(props) {
                 color: 'white',
               }}
             >
-              <CloseIcon />
+              <div className='mt-3 mr-5'>
+                <CloseIcon />
+              </div>
             </IconButton>
           </Stack>
           <Divider sx={{ background: '#6B7A99', margin: '8px 0' }} />
-          <Stack spacing={3} sx={{ marginTop: '20px' }}>
+          <Stack spacing={3} sx={{ marginTop: '40px' }}>
             <Stack
               sx={{
                 position: 'relative',
                 width: 'max-content',
               }}
             >
-              <ImgStyled src={imgSrc} alt='Profile Pic' />
-
+              <ImgStyled src={imgSrc || ProfileImage} alt='Profile Pic' />
               <IconButton
                 component='label'
                 role={undefined}
@@ -127,43 +157,47 @@ export default function UpdateContentDialog(props) {
                 <input
                   hidden
                   type='file'
-                  value={inputValue}
                   accept='image/png, image/jpeg'
                   onChange={handleInputImageChange}
                   id='account-settings-upload-image'
                 />
               </IconButton>
             </Stack>
-            <Stack
-              alignItems={'center'}
-              justifyContent={'center'}
-              spacing={3}
-              sx={{
-                '& .ck-content': {
-                  width: '100% !important',
-                },
-              }}
-            >
-              <input
-                type='text'
-                placeholder='Search Name, Enrollment, Standard'
-                className='bg-transparent text-white placeholder-white p-2 rounded-md border border-[#343B4F] text-sm w-full'
+            <Stack alignItems='center' justifyContent='center' spacing={3}>
+              <TextField
+                size='small'
+                fullWidth
+                name='name'
+                value={changeData.name}
+                onChange={handleInputChange}
               />
-              <div className='w-full'>
-                <RichTextEditor value={editorValue} setValue={setEditorValue} />
+              <div className='mt-5 w-full'>
+                <RichTextEditor
+                  value={changeData?.description}
+                  onChange={description =>
+                    setChangeData(prevState => ({
+                      ...prevState,
+                      description,
+                    }))
+                  }
+                />
               </div>
-              <Button
-                sx={{
-                  background: 'white',
-                  display: 'inline-block',
-                  color: '#000',
-                  fontWeight: 'normal',
-                  padding: '8px 16px',
-                }}
-                onClick={updateHandler}
-              >
-                Update
-              </Button>
+              <div className='mt-6'>
+                <Button
+                  sx={{
+                    marginTop: '28px',
+                    background: 'white',
+                    display: 'inline-block',
+                    color: '#000',
+                    fontWeight: 'normal',
+                    width: '8rem',
+                    text: '18px',
+                  }}
+                  onClick={handleUpdate}
+                >
+                  Update
+                </Button>
+              </div>
             </Stack>
           </Stack>
         </DialogContent>

@@ -1,4 +1,5 @@
-import React, { useCallback, useState } from 'react';
+/* eslint-disable import/no-cycle */
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import {
   Box,
@@ -11,11 +12,16 @@ import {
   Divider,
 } from '@mui/material';
 import { RiImageAddLine } from 'react-icons/ri';
+import { useNavigate, useNavigation } from 'react-router-dom';
 import MrDropzone from './tools/MrDropzone';
 import MrCKEditor from './tools/CKeditor/MrCKEditor';
 import colors from '../../theme/colors';
 import HeadSection from './tools/HeadSection';
 import UploadVideo from '../shared/UploadVideo/index';
+import MaterialDropDown from '../Material/Filters/MaterialDropDown';
+import RichTextEditor from '../shared/RichTextEditor';
+import { getRouteByName } from '../../App.routes';
+import MaterialDropDown2 from '../Material/Filters/MaterialDropDown2';
 
 const BasicDetailsContainer = styled(Box)(({ theme }) => ({
   overflowY: 'auto',
@@ -52,9 +58,17 @@ function BasicDetails({
   setTitle,
   setVideoUpload,
   isVideoUpload,
+  setFilters,
+  setDescription,
+  description,
+  setThumbnailImage,
+  setThumbnailVideo,
+  filters,
+  thumbnailVideo,
 }) {
-  console.log(submitRef, 'submitRef');
+  const navigate = useNavigate();
 
+  console.log('filters========>', filters);
   const onDropThumbnail1 = useCallback(
     acceptedFiles => {
       // Handle the files
@@ -63,8 +77,8 @@ function BasicDetails({
         file: acceptedFiles[0],
         src: URL.createObjectURL(acceptedFiles[0]),
       };
-      console.log(filesTemp, 'filesTemp');
       setFiles(filesTemp);
+      setThumbnailImage(filesTemp[0]);
       setUpload(true);
     },
     [files],
@@ -78,8 +92,8 @@ function BasicDetails({
         file: acceptedFiles[0],
         src: URL.createObjectURL(acceptedFiles[0]),
       };
-      console.log(filesTemp);
       setFiles(filesTemp);
+      setThumbnailVideo(filesTemp[1]);
       setVideoUpload(true);
     },
     [files],
@@ -104,56 +118,74 @@ function BasicDetails({
 
   return (
     <BasicDetailsContainer>
-      {/* Thumbnail Section */}
-      <HeadSection
-        title={'Thumbnail'}
-        details={
-          "Select or upload a picture that shows what's in your video. A good thumbnail stands out and draws viewers' attention."
-        }
-      />
-      <Box sx={{ flexGrow: 1 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={6}>
-            <Item>
-              <MrDropzone
-                onDrop={onDropThumbnail1}
-                files={files?.[0]}
-                onRemoveThumbnail={onRemoveThumbnail1}
-                imgIcon={
-                  <RiImageAddLine size={40} style={{ marginBottom: '20px' }} />
-                }
-                uploadMetadata={{
-                  title: 'Upload Thumbnail',
-                  mimeType: ['.pdf'],
-                  description: 'Max File Size 50 MB',
-                }}
-              />
-            </Item>
+      <FormControl fullWidth>
+        {/* Thumbnail Section */}
+        <HeadSection
+          title={'Thumbnail'}
+          details={
+            "Select or upload a picture that shows what's in your video. A good thumbnail stands out and draws viewers' attention."
+          }
+        />
+        <Box sx={{ flexGrow: 1 }}>
+          <Grid container spacing={2}>
+            <Grid item xs={6}>
+              <Item>
+                <MrDropzone
+                  onDrop={onDropThumbnail1}
+                  files={files?.[0]}
+                  onRemoveThumbnail={onRemoveThumbnail1}
+                  imgIcon={
+                    <RiImageAddLine
+                      size={40}
+                      style={{ marginBottom: '20px' }}
+                    />
+                  }
+                  uploadMetadata={{
+                    title: 'Upload Thumbnail',
+                    mimeType: ['.pdf'],
+                    description: 'Max File Size 50 MB',
+                  }}
+                />
+              </Item>
+            </Grid>
+            <Grid item xs={6}>
+              <Item>
+                <UploadVideo
+                  onDrop={onDropThumbnail2}
+                  isUpload={isVideoUpload}
+                  thumbnailVideo={thumbnailVideo}
+                />
+              </Item>
+            </Grid>
           </Grid>
-          <Grid item xs={6}>
-            <Item>
-              <UploadVideo onDrop={onDropThumbnail2} isUpload={isVideoUpload} />
-            </Item>
+        </Box>
+        <Divider
+          sx={{
+            background: theme => theme.color.border_color,
+            marginTop: '10px',
+          }}
+        />
+        <Grid container mt={2}>
+          <Grid item xs={12}>
+            <span className='flex items-start my-2'>
+              Select Course & Subject & Chapter
+            </span>
+            <MaterialDropDown2
+              setApplyFilter={setFilters}
+              hideInput={true}
+              selectedFilters={filters}
+            />
           </Grid>
-        </Grid>
-      </Box>
-      <Divider
-        sx={{
-          background: theme => theme.color.border_color,
-          marginTop: '10px',
-        }}
-      />
-      <Grid container mt={2}>
-        <Grid item xs={12}>
-          <Item>
-            <p className='text-white text-left'>
-              Title <span className='text-red-600'>*</span>
-            </p>
-            <FormControl fullWidth sx={{ m: 1 }}>
+          <Grid item xs={12}>
+            <Item>
+              <p className='text-white text-left'>
+                Title <span className='text-red-600'>*</span>
+              </p>
               <TextField
                 className='w-4/12'
                 variant='outlined'
                 placeholder='Enter title'
+                name='title'
                 value={title}
                 onChange={onChange}
                 fullWidth
@@ -166,22 +198,20 @@ function BasicDetails({
                   },
                 }}
               />
-            </FormControl>
-          </Item>
+            </Item>
+          </Grid>
         </Grid>
-      </Grid>
-      <Grid container mt={2} mb={6}>
-        <Grid item xs={12}>
-          <Item>
-            <p className='text-white text-left'>
-              Description <span className='text-red-600'>*</span>
-            </p>
-            <FormControl fullWidth sx={{ m: 1 }}>
-              <MrCKEditor />
-            </FormControl>
-          </Item>
+        <Grid container mt={2} mb={6}>
+          <Grid item xs={12}>
+            <Item>
+              <p className='text-white text-left'>
+                Description <span className='text-red-600'>*</span>
+              </p>
+              <RichTextEditor value={description} onChange={setDescription} />
+            </Item>
+          </Grid>
         </Grid>
-      </Grid>
+      </FormControl>
     </BasicDetailsContainer>
   );
 }

@@ -1,74 +1,60 @@
+/* eslint-disable import/no-cycle */
 import React from 'react';
 import Accordion from './Accordion';
+import Loader from '../../shared/Loader';
+import useContent from '../hooks/useContent';
+import Pagination from '../../shared/Pagination';
 
 const ContentTabs = () => {
-  const data = [
-    {
-      chapter: 'પ્રકરણ - ૧ ભારતનો વારસો',
-      subtopics: ['1.0 પ્રકરણ - ૧ भारतનો वारसो', '1.0 પ્રકરણ - ૧ भारतनो वारसो'],
-      locked: true,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-    {
-      chapter: 'પ્રકરણ - ૨ भारतनो वारसो',
-      subtopics: ['1.0 પ્રકરણ - ૨ भारतनो वारसो', '1.0 प्रकरण - २ भारतनो वारसो'],
-      locked: false,
-    },
-  ];
+  const {
+    contentList,
+    loading,
+    lockedContent,
+    DeleteContentById,
+    currentPage,
+    setCurrentPage,
+    setSearchTerm,
+    searchTerm,
+    totalShowItems,
+    itemsPerPage,
+  } = useContent();
 
-  return (
-    <div className='min-h-screen text-white p-6'>
-      <div className='space-y-4'>
-        {data.map((item, index) => (
-          <Accordion
-            key={index}
-            chapter={item.chapter}
-            subtopics={item.subtopics}
-            locked={item.locked}
+  let content;
+
+  if (loading) {
+    content = <Loader />;
+  } else if (totalShowItems > 0) {
+    content = (
+      <>
+        <div className='space-y-4'>
+          {contentList.map((item, index) => (
+            <Accordion
+              key={index}
+              chapter={item.chapter}
+              subtopics={item.subtopics}
+              locked={item.locked}
+              data={item}
+              count={item?.id}
+              isLocked={lockedContent}
+              onDelete={DeleteContentById}
+            />
+          ))}
+        </div>
+        <div>
+          <Pagination
+            totalCards={searchTerm ? contentList?.length : totalShowItems}
+            cardsPerPage={itemsPerPage}
+            setCurrentPage={setCurrentPage}
+            currentPage={currentPage}
           />
-        ))}
-      </div>
-    </div>
-  );
+        </div>
+      </>
+    );
+  } else {
+    content = <p className='text-white'>No records found.</p>;
+  }
+
+  return <div className='min-h-screen text-white p-6'>{content}</div>;
 };
 
 export default ContentTabs;

@@ -1,5 +1,5 @@
 /* eslint-disable import/no-named-as-default */
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Paper from '@mui/material/Paper';
@@ -19,26 +19,46 @@ const Item = styled(Paper)(({ theme }) => ({
   color: '#F6B336',
 }));
 
-const Videos = () => {
+const Videos = props => {
+  const { setVideoFiles, videoFiles } = props;
   const theme = useTheme();
   const videoHelper = MaterialContentHelper();
-  const [video, setVideo] = useState(videoHelper.generateVideoCard(3));
+  // useEffect(() => {
+  //   console.log('in useEffect');
+  //   setVideoFiles(videoHelper.generateVideoCard(3));
+  // }, []);
   const addVideoCard = () => {
-    setVideo(prevValues => [
+    setVideoFiles(prevValues => [
       ...prevValues,
       ...videoHelper.generateVideoCard(1),
     ]);
   };
-  console.log('video', video);
+  const onDropVideo = (acceptedFiles, idx) => {
+    // Handle the files
+    const filesTemp = [...videoFiles];
+    filesTemp[idx] = {
+      file: acceptedFiles[0],
+      src: URL.createObjectURL(acceptedFiles[0]),
+    };
+    setVideoFiles(filesTemp);
+    // setThumbnailVideo(filesTemp[1]);
+    // setVideoUpload(true);
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <HeadSection title={'Videos'} />
       <Grid container spacing={2}>
-        {video.map((videItem, idx) => {
+        {videoFiles?.map((videItem, idx) => {
           return (
             <Grid item xs={6} md={4} key={idx}>
               <Item>
-                <UploadVideo />
+                <UploadVideo
+                  onDrop={onDropVideo}
+                  idx={idx}
+                  isUpload={false}
+                  thumbnailVideo={videItem}
+                />
               </Item>
             </Grid>
           );

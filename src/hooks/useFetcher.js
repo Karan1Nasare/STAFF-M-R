@@ -29,7 +29,6 @@ const useFetcher = () => {
 
     try {
       const response = await executer();
-      console.log('🚀 ~ useFetcher ~ response:', response.status);
 
       if (response.status === 200) {
         onSuccess?.(response);

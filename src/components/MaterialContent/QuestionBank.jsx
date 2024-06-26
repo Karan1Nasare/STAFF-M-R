@@ -15,30 +15,55 @@ const Item = styled(Paper)(({ theme }) => ({
   color: '#F6B336',
 }));
 
-const QuestionBank = () => {
+const QuestionBank = ({ questionBankFile, setQuestionBankFile }) => {
   const theme = useTheme();
   const documentHelper = MaterialContentHelper();
-  const [document, setdocument] = useState(documentHelper.generateVideoCard(3));
+
+  // Function to add a new question bank card
   const addQuestionBankCard = () => {
-    setdocument(prevValues => [
+    setQuestionBankFile(prevValues => [
       ...prevValues,
       ...documentHelper.generateVideoCard(1),
     ]);
   };
+
+  // Handler for changing a question bank file
+  const handleQuestionBankChange = (index, file) => {
+    const updatedFiles = [...questionBankFile];
+    updatedFiles[index] = {
+      ...updatedFiles[index],
+      src: URL.createObjectURL(file),
+      files: file,
+    };
+    setQuestionBankFile(updatedFiles);
+  };
+
+  // Handler for removing a question bank file
+  const handleRemoveQuestionBank = index => {
+    const updatedFiles = [...questionBankFile];
+    updatedFiles.splice(index, 1);
+    setQuestionBankFile(updatedFiles);
+  };
+
   return (
-    <div>
+    <Box sx={{ flexGrow: 1 }}>
       <HeadSection title={'Question Bank'} />
       <Grid container spacing={2}>
-        {document.map((documentItem, idx) => (
+        {questionBankFile?.map((documentItem, idx) => (
           <Grid item xs={6} md={4} key={idx}>
             <Item>
               <MrDropzone
+                files={documentItem} // Pass the individual document object to MrDropzone
+                onDrop={acceptedFiles =>
+                  handleQuestionBankChange(idx, acceptedFiles[0])
+                }
+                onRemoveThumbnail={() => handleRemoveQuestionBank(idx)}
                 imgIcon={
                   <Icon
                     icon='grommet-icons:document-upload'
                     fontSize={30}
                     style={{ marginBottom: '20px' }}
-                  ></Icon>
+                  />
                 }
                 uploadMetadata={{
                   title: 'Upload Question Bank',
@@ -55,7 +80,7 @@ const QuestionBank = () => {
           </Item>
         </Grid>
       </Grid>
-    </div>
+    </Box>
   );
 };
 

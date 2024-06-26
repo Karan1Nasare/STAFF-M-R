@@ -13,6 +13,8 @@ import React from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { CalendarToday } from '@mui/icons-material';
 
+import DefaultImage from '../../../assets/adminProfile.png';
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />;
 });
@@ -32,7 +34,7 @@ const ContentDetailsDialog = props => {
       >
         <DialogContent>
           <Stack>
-            <Typography sx={{ color: 'white' }}>{data?.title}</Typography>
+            <Typography sx={{ color: 'white' }}>{data?.name}</Typography>
             <IconButton
               aria-label='close'
               onClick={handleClose}
@@ -56,7 +58,7 @@ const ContentDetailsDialog = props => {
             >
               <CardMedia
                 component='img'
-                image={data?.image}
+                image={data?.image || DefaultImage}
                 alt='Person'
                 sx={{ width: 150, height: 150, borderRadius: 2, mr: 2 }}
               />
@@ -68,15 +70,17 @@ const ContentDetailsDialog = props => {
                     marginLeft: 0,
                   }}
                 >
-                  {data?.title}
+                  {data?.name}
                 </Typography>
                 <Stack direction={'row'} alignItems={'center'}>
                   <CalendarToday sx={{ fontSize: 16, color: '#98A4AE' }} />
                   <p className='text-start text-[#98A4AE] text-xs my-3 mx-2'>
-                    {data?.date}
+                    {data?.created_at || '13 May 2015'}
                   </p>
                 </Stack>
-                <p className='text-left text-xs'>{data?.description}</p>
+                <p className='text-left text-xs'>
+                  {data?.description || 'No description provided'}
+                </p>
               </Stack>
             </Stack>
           </Stack>
