@@ -1,11 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+import URLS from '../../../constants/api';
+import { APIClient2 } from '../../../utilities/axios-client';
+import useFetcher from '../../../hooks/useFetcher';
 
 const useAddNotification = () => {
+  const { fetcher, getExecutorState } = useFetcher();
+  const { axiosInstance } = APIClient2();
+
+  const navigate = useNavigate();
+
   const [adminData, setAdminData] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [searchInputValue, setSearchInputValue] = useState('');
   const [filteredData, setFilteredData] = useState([]);
+  const [selectedFile, setSelectedFile] = useState();
   const data = filteredData.length > 0 ? filteredData : adminData;
+
+  const addNotification = async record => {
+    return axiosInstance.post(URLS.ADD_NOTIFICATION(), record);
+  };
+
+  const getAllAdmins = () => {
+    return axiosInstance.get(URLS.GET_ADMINS());
+  };
 
   const openAdminDialog = () => {
     setIsEditOpen(true);
@@ -15,23 +34,15 @@ const useAddNotification = () => {
     setIsEditOpen(false);
   };
 
-  const toggleChecked = index => {
-    const updatedAdminData = [...adminData];
-
-    updatedAdminData[index] = {
-      ...updatedAdminData[index],
-      isChecked: !updatedAdminData[index].isChecked,
-    };
-
-    setAdminData(updatedAdminData);
+  const selectAllAdmin = record => {
+    setAdminData(record);
   };
 
-  const selectAllAdmin = () => {
-    const updatedAdminData = adminData.map(item => ({
-      ...item,
-      isChecked: true,
-    }));
-    setAdminData(updatedAdminData);
+  const selectedAdminData = adminDataSelected => {
+    console.log(adminDataSelected);
+    if (adminDataSelected) {
+      setAdminData(adminDataSelected);
+    }
   };
 
   const hasCheckedAdmins = adminData.some(item => item.isChecked);
@@ -61,42 +72,59 @@ const useAddNotification = () => {
     }
   };
 
+  const onAddNotification = useCallback(async notification => {
+    try {
+      // const response = await API('POST', URLS.ADD_FEATURE(), data);
+      fetcher({
+        key: 'notification',
+        executer: () => addNotification(notification),
+        onSuccess: response => {
+          console.log('notification rresponse feature: ', response);
+          navigate('/notification');
+        },
+      });
+    } catch (err) {
+      console.error('Error while adding feature', err);
+    }
+  }, []);
+
+  const GetAllAdmins = useCallback(async admins => {
+    try {
+      fetcher({
+        key: 'admins',
+        executer: () => getAllAdmins(),
+        onSuccess: response => {
+          console.log('admins rresponse feature: ', response);
+          setAdminData(response?.data?.data?.data);
+        },
+      });
+    } catch (err) {
+      console.error('Error while adding feature', err);
+    }
+  }, []);
+
   useEffect(() => {
     try {
-      const fetchData = async () => {
-        const record = Array.from({ length: 6 }, (_, index) => ({
-          name: `Chirag ${index}`,
-          email: 'abcorg@gmail.com',
-          number: '+91 6353264115',
-          image:
-            'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRTISlGKcE78vh9ZCADuYZ7ZKi15wgU2pydPA&s',
-          standardName: 'Active Org',
-          standard: '200',
-          enrollment: 'wwww.mandreu...',
-          enrollmentName: 'Website',
-          id: index + 1,
-          isChecked: false,
-        }));
-
-        setAdminData(record);
-      };
-      fetchData();
+      GetAllAdmins();
     } catch (error) {
       console.log('Error while fetching notifications', error);
     }
   }, []);
 
   return {
-    data,
+    data: adminData,
     isEditOpen,
     hasCheckedAdmins,
     searchInputValue,
     openAdminDialog,
     closeAdminDialog,
-    toggleChecked,
+    selectedAdminData,
     selectAllAdmin,
     handleSearchClick,
     handleSearchInputChange,
+    onAddNotification,
+    selectedFile,
+    setSelectedFile,
   };
 };
 

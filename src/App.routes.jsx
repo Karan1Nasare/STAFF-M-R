@@ -296,7 +296,7 @@ const AppRoutes = [
     menu_location: '',
     icon: '',
     external: false,
-    auth: false,
+    auth: true,
     wrapper: LayoutWrapper,
   },
   {

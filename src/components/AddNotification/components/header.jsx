@@ -1,31 +1,50 @@
-import React from 'react';
-import Dropdown from '../../shared/DropDown';
+import React, { useEffect, useState } from 'react';
+import { RHFSelect } from '../../../hooks/hook-form';
 import SelectAdminDialog from './dialog/selectAdmin';
-import useAddNotification from '../hooks/useAddNotification';
-import SelectAdminCard from './selectedAdminCard';
+import SelectedAdminCard from './selectedAdminCard';
 
-const Header = () => {
-  const {
-    data,
-    isEditOpen,
-    hasCheckedAdmins,
-    searchInputValue,
-    selectAllAdmin,
-    openAdminDialog,
-    closeAdminDialog,
-    handleSearchClick,
-    handleSearchInputChange,
-  } = useAddNotification();
+const Header = ({
+  data,
+  isEditOpen,
+  searchInputValue,
+  selectAllAdmin,
+  openAdminDialog,
+  closeAdminDialog,
+  handleSearchClick,
+  handleSearchInputChange,
+  adminData,
+  selectedAdminIds,
+  setSelectedAdminIds,
+}) => {
+  const handleRemoveAdmin = idToRemove => {
+    const updatedAdminIds = selectedAdminIds.filter(id => id !== idToRemove);
+    const updatedData = data.map(admin => {
+      if (admin.id === idToRemove) {
+        return { ...admin, isChecked: false };
+      }
+      return admin;
+    });
+    setSelectedAdminIds(updatedAdminIds);
+    // Update your data state here if needed
+  };
+
+  useEffect(() => {
+    const selectedIds = data
+      .filter(admin => admin.isChecked)
+      .map(admin => admin.id);
+    setSelectedAdminIds(selectedIds);
+  }, [data]);
+
+  const hasCheckedAdmins = selectedAdminIds.length > 0;
 
   return (
     <>
       {!hasCheckedAdmins ? (
         <div className='select mt-6'>
           <div className='flex justify-end'>
-            <div className='border  rounded-md  text-white border-gray-700 border-solid bg-secondary__fill h-2.75 w-7.25 '>
-              <Dropdown className='h-full w-full' />
+            <div className='bg-secondary__fill w-[10%]'>
+              <RHFSelect name={'adminId'} />
             </div>
-
             <button
               onClick={openAdminDialog}
               className='bg-white ml-4 w-28 rounded-md p-1 h-10 text-sm'
@@ -41,13 +60,17 @@ const Header = () => {
             selectAllAdmin={selectAllAdmin}
             handleSearchClick={handleSearchClick}
             handleSearchInputChange={handleSearchInputChange}
+            selectedAdminData={adminData}
           />
         </div>
       ) : (
-        <div className='overflow-x-hidden'>
-          <div className='w-screen overflow-x-scroll'>
-            <div className='w-[120%] flex'>
-              <SelectAdminCard />
+        <div className='overflow-x-hidden w-full max-w-screen mx-auto'>
+          <div className='overflow-x-scroll'>
+            <div className='flex gap-4'>
+              <SelectedAdminCard
+                data={data.filter(admin => admin.isChecked)}
+                handleRemoveAdmin={handleRemoveAdmin}
+              />
             </div>
           </div>
         </div>

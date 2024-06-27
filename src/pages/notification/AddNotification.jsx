@@ -1,82 +1,90 @@
 import React, { useState } from 'react';
-import { Icon } from '@iconify/react';
-
-import AddMaterialForm from '../../components/ui/AddMaterialForm';
-import StudentNotification from '../../components/ui/notification/students/StudentNotification';
-import StaffNotification from '../../components/ui/notification/Staff/StaffNotification';
-import TextField from '../../components/shared/input/TextField';
-import MenuItem from '../../components/shared/menuitem/MenuItem';
+import { useNavigate } from 'react-router-dom';
+import { Icon } from '@iconify/react/dist/iconify';
 import Button from '../../components/shared/buttons/Button';
+import NotificationCard from '../../components/shared/Notification/NotificationCard';
 
-const AddNotification = () => {
-  const pageTitle = 'Notification';
-  const [sendTo, setSendTo] = useState('Both');
-  const [openstudentnotification, setOpenStudentNotification] = useState(false);
-  const [openstaffnotification, setOpenstaffNotification] = useState(false);
-  function handleselectstudent() {
-    setOpenStudentNotification(true);
-  }
-  function handleSelectStaff() {
-    setOpenstaffNotification(true);
-  }
+const Notification = () => {
+  const navigate = useNavigate();
+  const [notification, setaddnotification] = useState(false);
+  const handleaddnotification = () => {
+    navigate('/notification/add');
+  };
   return (
-    <div>
-      <div className='flex justify-between items-center'>
-        <h1 className='text-left text-white text-4xl mb-8'>{pageTitle}</h1>
-        <div className='flex items-center gap-2'>
-          <TextField
-            select
-            onChange={e => setSendTo(e.target.value)}
-            defaultValue='Both'
-            sx={{ width: '148px', p: '9px' }}
-          >
-            <MenuItem value='Both'>Both</MenuItem>
-            <MenuItem value='Student'>Student</MenuItem>
-            <MenuItem value='Staff'>Staff</MenuItem>
-          </TextField>
+    <>
+      <div
+        className='w-full'
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'hidden', // Disable container-level overflow
+          padding: 2, // Add padding to ensure content is not cut off
+        }}
+      >
+        <div className='w-max mb-6'>
+          <h2 className="text-white text-[32px] font-normal font-['Helvetica'] text-left">
+            Notification
+          </h2>
+        </div>
+        <section className='flex gap-5 p-[30px] rounded-xl border border-gray-700 border-solid bg-slate-900 max-md:flex-wrap max-md:px-5'>
+          <SearchInput />
+          {notification && (
+            <select className="bg-slate-900 text-white p-3 rounded-md text-sm font-['Helvetica'] font-normal border border-[#343B4F]">
+              <option>Select</option>
+              <option>Select Subject</option>
+              <option>Select Subject</option>
+            </select>
+          )}
 
-          {sendTo === 'Student' && (
-            <Button
-              sx={{ width: '132px', p: '9px', backgroundColor: 'white' }}
-              onClick={handleselectstudent}
-            >
-              <span className='my-auto'>Select Student</span>
-            </Button>
-          )}
-          {sendTo === 'Staff' && (
-            <Button
-              sx={{ width: '132px', p: '9px', backgroundColor: 'white' }}
-              onClick={handleSelectStaff}
-            >
-              <span className='my-auto'>Select Staff</span>
-            </Button>
-          )}
+          <Button
+            sx={{ width: '179px', p: '9px', backgroundColor: 'white' }}
+            onClick={handleaddnotification}
+            startIcon={<Icon icon={'gala:add'} />}
+          >
+            Add Notification
+          </Button>
+        </section>
+        <div className='grid grid-cols-2 gap-8 overflow-y-auto mt-2 py-4'>
+          <>
+            <NotificationCard />
+            <NotificationCard />
+          </>
         </div>
       </div>
-
-      <AddMaterialForm inputLabel={'Title'} placeholder={'Enter Title'} />
-      <div className='text-right w-full flex justify-end mt-2'>
-        <button className='flex items-center gap-2.5 px-4 py-2.5 text-base text-center bg-white rounded-lg text-slate-900'>
-          <Icon
-            icon={'simple-line-icons:plus'}
-            className='shrink-0 w-6 aspect-square text-black'
-            fontSize={'1.2rem'}
-          />
-          <span className='my-auto'>Add {pageTitle}</span>
-        </button>
-      </div>
-      {openstudentnotification && (
-        <StudentNotification
-          closehandler={() => setOpenStudentNotification(false)}
-        />
-      )}
-      {openstaffnotification && (
-        <StaffNotification
-          closehandler={() => setOpenstaffNotification(false)}
-        />
-      )}
-    </div>
+    </>
   );
 };
 
-export default AddNotification;
+export default Notification;
+
+function SearchInput() {
+  return (
+    <div className='flex flex-1 gap-2.5 pr-20 max-md:flex-wrap max-md:max-w-full'>
+      <label htmlFor='searchInput' className='sr-only'>
+        Search
+      </label>
+      <input
+        type='text'
+        id='searchInput'
+        className='justify-center items-start self-start px-3 py-3 text-sm leading-5 rounded border border-solid bg-slate-900 border-gray-700 border-opacity-20 text-white text-opacity-20 max-md:pr-5'
+        placeholder='Search Name, Enrollment, Standard'
+        aria-label='Search Name, Enrollment, Standard'
+      />
+      <div
+        tabIndex='0'
+        role='button'
+        className='flex justify-center items-center px-2.5 w-11 h-11 rounded border border-solid bg-slate-900 border-gray-700 border-opacity-20'
+        onClick={() => {
+          document.getElementById('searchInput').focus();
+        }}
+      >
+        <img
+          alt='Search Icon'
+          loading='lazy'
+          src='https://cdn.builder.io/api/v1/image/assets/TEMP/7b5e15531bb83a15e880bc93e8212046ef6cc457d9db49d36a9d6af588e92ead?apiKey=33d350ef18e9405bbdd3cdc1375c0c2b&'
+          className='w-6 aspect-square'
+        />
+      </div>
+    </div>
+  );
+}

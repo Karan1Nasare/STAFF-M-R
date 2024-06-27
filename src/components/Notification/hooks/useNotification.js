@@ -1,66 +1,121 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+
+import axiosInstance, { APIClient } from '../../../utilities/axios-client';
+import URLS from '../../../constants/api';
+import useFetcher from '../../../hooks/useFetcher';
 
 const ITEMS_PER_PAGE = 4;
 
 const useNotification = () => {
+  const { API } = APIClient();
+  const { fetcher, getExecutorState } = useFetcher();
+
+  const editNotification = async (id, data) => {
+    return axiosInstance.post(URLS.EDIT_NOTIFICATION(id), data);
+  };
+
+  const deleteNotification = async (id, data) => {
+    return axiosInstance.delete(URLS.DELETE_NOTIFICATION(id));
+  };
+
+  const getNotification = (searchInput, pageSize) => {
+    return axiosInstance.get(URLS.GET_NOTIFICATIION(searchInput, pageSize));
+  };
+
   const navigate = useNavigate();
 
-  const [notificationData, setNotificationData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const [notificationList, setNotificationList] = useState([]);
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(true);
 
   // Fetch initial data
-  const fetchData = async () => {
-    // Simulated data fetching
-    const record = Array.from({ length: 50 }, (_, index) => ({
-      title: `Admin ${index}`,
-      id: index + 1,
-    }));
-    setNotificationData(record);
+  const fetchNotificationList = async (pageSize = '') => {
+    setLoading(true);
+    try {
+      fetcher({
+        key: 'get-notification',
+        executer: () => getNotification(searchTerm, pageSize),
+        onSuccess: response => {
+          console.log('rresponse: ', response);
+          const record = response?.data?.data?.data;
+          setNotificationList(record);
+          setLoading(false);
+        },
+      });
+    } catch (err) {
+      console.log('error while fetching notifications', err);
+    }
+  };
+
+  const DeleteNotification = useCallback(async id => {
+    try {
+      fetcher({
+        key: 'delete-notification',
+        executer: () => deleteNotification(id),
+        onSuccess: response => {
+          console.log('rresponse: ', response);
+          fetchNotificationList();
+        },
+      });
+    } catch (err) {
+      console.log('error while fetching notifications', err);
+    }
+  }, []);
+
+  const UpdateNotification = useCallback(async (id, notification) => {
+    try {
+      fetcher({
+        key: 'edit-notification',
+        executer: () => editNotification(id, notification),
+        onSuccess: response => {
+          console.log('rresponse: ', response);
+          fetchNotificationList();
+        },
+      });
+    } catch (err) {
+      console.log('error while fetching notifications', err);
+    }
+  }, []);
+
+  const handleUpdateNotification = (id, notification) => {
+    console.log('🚀 ~ handleUpdateNotification ~ notification:', notification);
+    UpdateNotification(id, notification);
+    setIsEditOpen(false);
   };
 
   useEffect(() => {
-    try {
-      fetchData();
-    } catch (error) {
-      console.log('error while fetching notifications', error);
-    }
-  }, []);
+    fetchNotificationList();
+  }, [searchTerm]);
 
   // Calculate filtered items based on search term
   useEffect(() => {
     if (searchTerm.trim() === '') {
-      setFilteredData([]);
       setCurrentPage(1); // Reset page number when clearing search
       return;
     }
 
-    const filteredItems = notificationData.filter(notification =>
-      notification.title.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-
-    setFilteredData(filteredItems);
     setCurrentPage(1); // Reset page number when performing a search
-  }, [searchTerm, notificationData]);
+  }, [searchTerm, notificationList]);
 
   // Determine current items based on search results or pagination
   const lastCardIndex = currentPage * ITEMS_PER_PAGE;
   const firstCardIndex = lastCardIndex - ITEMS_PER_PAGE;
-  const currentItems = searchTerm
-    ? filteredData.slice(firstCardIndex, lastCardIndex)
-    : notificationData.slice(firstCardIndex, lastCardIndex);
+  const currentItems = notificationList?.slice(firstCardIndex, lastCardIndex);
 
-  const handleSearchChange = event => {
-    setSearchTerm(event.target.value);
+  const handleSearchChange = value => {
+    setSearchTerm(value);
   };
 
   const openEditDialog = () => setIsEditOpen(true);
   const closeEditDialog = () => setIsEditOpen(false);
-  const confirmDeleteHandler = () => setOpenDelete(false);
+  const confirmDeleteHandler = id => {
+    DeleteNotification(id);
+    setOpenDelete(false);
+  };
   const handleCloseDelete = () => setOpenDelete(false);
   const openDeleteDialog = () => setOpenDelete(true);
   const handleAddNotification = () => navigate('/notification/addNotification');
@@ -70,9 +125,10 @@ const useNotification = () => {
     isEditOpen,
     openDelete,
     searchTerm,
-    totalShowItems: notificationData?.length,
+    totalShowItems: notificationList?.length,
     currentPage,
     ITEMS_PER_PAGE,
+    loading,
     setCurrentPage,
     handleSearchChange,
     openEditDialog,
@@ -81,6 +137,7 @@ const useNotification = () => {
     handleCloseDelete,
     openDeleteDialog,
     handleAddNotification,
+    handleUpdateNotification,
   };
 };
 
