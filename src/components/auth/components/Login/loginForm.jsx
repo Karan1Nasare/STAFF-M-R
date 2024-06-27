@@ -5,11 +5,15 @@ import { useForm } from 'react-hook-form';
 import { object, string } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from 'react-router-dom';
+import IconButton from '@mui/material/IconButton';
+import InputAdornment from '@mui/material/InputAdornment';
+import Visibility from '@mui/icons-material/Visibility';
+import VisibilityOff from '@mui/icons-material/VisibilityOff';
+import useFetcher from '../../../../hooks/useFetcher';
+import URLS from '../../../../constants/api';
 import AuthButtonBg from '../../../../assets/auth/buttonBg.svg';
 import { APIClient, APIClient2 } from '../../../../utilities/axios-client';
 import { useStore } from '../../../../store/context-store';
-import useFetcher from '../../../../hooks/useFetcher';
-import URLS from '../../../../constants/api';
 import { getRouteByName } from '../../../../App.routes';
 
 const LoginForm = () => {
@@ -57,9 +61,13 @@ const LoginForm = () => {
       },
     });
   };
-
+  const [showPassword, setShowPassword] = React.useState(false);
+  const handleClickShowPassword = () => setShowPassword(show => !show);
+  const handleMouseDownPassword = e => {
+    e.preventDefault();
+  };
   return (
-    <div className='text-white w-[40%] lg:ml-64'>
+    <div className='text-white w-[40%] lg:ml-40'>
       <form onSubmit={handleSubmit(onLoginHandler)}>
         <Typography variant='h4' className='text-start block mb-10'>
           Login to Continue
@@ -75,13 +83,51 @@ const LoginForm = () => {
             <p>{errors?.username?.message}</p>
           </div>
           <div>
-            <TextField
-              placeholder='Password (Required)'
-              className='underline-border w-full'
-              variant='standard'
-              type='password'
-              {...register('password')}
-            />
+            <div className='bg-secondary__fill mt-2 rounded-md border border-gray-700 '>
+              <TextField
+                name='password'
+                placeholder='Password (Required)'
+                label=''
+                className='underline-border w-full'
+                variant='outlined'
+                {...register('password')}
+                id='standard-adornment-password'
+                type={showPassword ? 'text' : 'password'}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment
+                      position='end'
+                      sx={{ border: 'none', marginRight: '0' }}
+                    >
+                      <IconButton
+                        style={{ color: 'white' }}
+                        aria-label='toggle password visibility'
+                        onClick={handleClickShowPassword}
+                        onMouseDown={handleMouseDownPassword}
+                      >
+                        {showPassword ? <Visibility /> : <VisibilityOff />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                  sx: {
+                    '&.MuiOutlinedInput-root': {
+                      '& fieldset': {
+                        borderColor: 'transparent',
+                      },
+                      '&:hover fieldset': {
+                        borderColor: 'transparent',
+                      },
+                      '&.Mui-focused fieldset': {
+                        borderColor: 'transparent',
+                      },
+                      '& .MuiInputBase-input': {
+                        border: 'none', // Specifically target the right border of the input
+                      },
+                    },
+                  },
+                }}
+              />
+            </div>
             <p>{errors?.password?.message}</p>
           </div>
         </div>

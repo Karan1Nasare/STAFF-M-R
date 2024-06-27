@@ -14,42 +14,62 @@ const SuperAdminSideBar = () => {
       navigate(getRouteByName(value.name)?.route);
     });
   }, []);
+
+  const isRouteActive = routeName => {
+    const route = getRouteByName(routeName);
+    if (route) {
+      const isActive =
+        location.pathname === route.route ||
+        location.pathname.startsWith(`${route.route}/`);
+      if (route.parent) {
+        const parentRoute = getRouteByName(route.parent);
+        if (parentRoute) {
+          return (
+            isActive || location.pathname.startsWith(`${parentRoute.route}/`)
+          );
+        }
+      }
+      return isActive;
+    }
+    return false;
+  };
+
   const menuList = [
     {
       label: 'Dashboard',
       icon: 'ic:baseline-space-dashboard',
       name: 'dashboard',
-      isActive: ['/', '/dashboard'].includes(location.pathname),
+      isActive: isRouteActive('dashboard'),
     },
     {
       label: 'Students',
       icon: 'hugeicons:message-multiple-01',
       name: 'student',
-      isActive: location.pathname === getRouteByName('student')?.route,
+      isActive: isRouteActive('student'),
     },
     {
       label: 'Exam',
       icon: 'flowbite:user-settings-solid',
       name: 'questionBank',
-      isActive: location.pathname === getRouteByName('questionBank')?.route,
+      isActive: isRouteActive('questionBank'),
     },
     {
       label: 'Material',
       icon: 'mage:file-2-fill',
       name: 'material',
-      isActive: location.pathname === getRouteByName('material')?.route,
+      isActive: isRouteActive('material'),
     },
     {
       label: 'Question Bank',
       icon: 'mage:file-2-fill',
       name: 'questionBank',
-      isActive: location.pathname === getRouteByName('questionBank')?.route,
+      isActive: isRouteActive('questionBank'),
     },
     {
       label: 'Notification',
       icon: 'mdi:announcement',
       name: 'notification',
-      isActive: location.pathname === getRouteByName('notification')?.route,
+      isActive: isRouteActive('notification'),
     },
   ];
   return (

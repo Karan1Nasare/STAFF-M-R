@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import React, { useState } from 'react';
+import { styled } from '@mui/material/styles';
 import { Box, Paper, Grid } from '@mui/material';
 import { Icon } from '@iconify/react';
 import MrDropzone from './tools/MrDropzone';
@@ -15,6 +15,12 @@ const Item = styled(Paper)(({ theme }) => ({
   color: '#F6B336',
 }));
 
+const acceptedFileTypes = [
+  'application/pdf',
+  'application/msword',
+  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+];
+
 const Documents = ({ documentFile, setDocumentFile }) => {
   const documentHelper = MaterialContentHelper();
 
@@ -28,7 +34,11 @@ const Documents = ({ documentFile, setDocumentFile }) => {
 
   // Handler for changing a document file
   const handleDocumentChange = (index, file) => {
-    console.log('🚀 ~ handleDocumentChange ~ file:', file);
+    if (!acceptedFileTypes.includes(file.type)) {
+      alert('Invalid file type. Please upload a document.');
+      return;
+    }
+
     const updatedFiles = [...documentFile];
     updatedFiles[index] = {
       ...updatedFiles[index],
@@ -67,7 +77,7 @@ const Documents = ({ documentFile, setDocumentFile }) => {
                 }
                 uploadMetadata={{
                   title: 'Upload Document',
-                  mimeType: ['.pdf'],
+                  mimeType: ['.pdf', '.doc', '.docx'],
                   description: 'Max File Size 15 MB',
                 }}
               />

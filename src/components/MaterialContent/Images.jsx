@@ -47,6 +47,11 @@ const Images = ({ imagesFile, setImagesFile }) => {
     setImagesFile(updatedFiles);
   };
 
+  const validateFileType = file => {
+    const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif'];
+    return validTypes.includes(file.type);
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <HeadSection title={'Images'} />
@@ -56,9 +61,16 @@ const Images = ({ imagesFile, setImagesFile }) => {
             <Item>
               <MrDropzone
                 files={imageItem} // Pass the individual file object to MrDropzone
-                onDrop={acceptedFiles =>
-                  handleImageChange(idx, acceptedFiles[0])
-                }
+                onDrop={acceptedFiles => {
+                  const file = acceptedFiles[0];
+                  if (validateFileType(file)) {
+                    handleImageChange(idx, file);
+                  } else {
+                    alert(
+                      'Please upload a valid image file (png, jpg, jpeg, gif)',
+                    );
+                  }
+                }}
                 onRemoveThumbnail={() => handleRemoveImage(idx)}
                 imgIcon={
                   <Icon

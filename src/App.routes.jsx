@@ -137,7 +137,7 @@ const AppRoutes = [
   {
     name: 'studentAttendance',
     slug: 'studentAttendance',
-    route: '/studentAttendance',
+    route: '/student/studentAttendance',
     component: StudentAttendance,
     icon: '',
     external: false,
@@ -192,7 +192,7 @@ const AppRoutes = [
   {
     name: 'addQuestions',
     slug: 'addQuestions',
-    route: `/addQuestions`,
+    route: `/questionBank/addQuestions`,
     component: AddQuestions,
     menu_location: '',
     icon: '',
@@ -225,7 +225,7 @@ const AppRoutes = [
   {
     name: 'material',
     slug: 'material',
-    route: `/material/addCourse`,
+    route: `/material/add/:params`,
     component: AddCourse,
     menu_location: '',
     icon: '',
@@ -291,7 +291,7 @@ const AppRoutes = [
   {
     name: 'addNotification',
     slug: 'addNotification',
-    route: '/addNotification',
+    route: '/notification/addNotification',
     component: AddNotification,
     menu_location: '',
     icon: '',

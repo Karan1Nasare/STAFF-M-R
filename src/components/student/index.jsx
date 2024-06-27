@@ -55,7 +55,7 @@ const Index = () => {
           handleSearchClick={handleSearchClick}
         />
         <div
-          className='mt-8'
+          className=''
           style={{
             flex: 1,
             overflowY: 'auto', // Enable scrolling for this box

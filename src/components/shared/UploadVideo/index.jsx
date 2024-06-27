@@ -5,16 +5,18 @@ import ReactPlayer from 'react-player/file';
 import './styles.css';
 import { FaPlay } from 'react-icons/fa';
 import { Typography } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
-const UploadVideo = ({ onDrop, isUpload }) => {
+const UploadVideo = ({ onDrop, isUpload, thumbnailVideo, idx }) => {
   const { getRootProps, getInputProps, isDragActive, inputRef } = useDropzone({
-    onDrop,
+    onDrop: acceptedFiles => onDrop(acceptedFiles, idx),
     accept: {
       'video/*': ['.mp4', '.mpeg'],
     },
     multiple: false,
   });
-
+  console.log('thumbnailVideo', thumbnailVideo);
   return (
     <div className='relative h-[208px] cursor-pointer bg-transparent flex justify-center items-center rounded-md'>
       <svg className='absolute top-0 left-0 w-full h-full'>
@@ -32,14 +34,27 @@ const UploadVideo = ({ onDrop, isUpload }) => {
         />
       </svg>
       <div className='relative z-10 w-full h-full flex justify-center items-center'>
-        {isUpload ? (
-          <ReactPlayer
-            url='http://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4'
-            playing={true}
-            controls={true}
-            width='100%'
-            height='100%'
-          />
+        {isUpload || thumbnailVideo?.src ? (
+          <>
+            <ReactPlayer
+              url={thumbnailVideo?.src}
+              playing={true}
+              controls={true}
+              width='100%'
+              height='100%'
+            />
+            <div className='alter-section'>
+              <span onClick={() => {}}>
+                <div {...getRootProps()} className='h-full'>
+                  <input {...getInputProps()} />
+                  <EditIcon />
+                </div>
+              </span>
+              <span onClick={() => {}}>
+                <DeleteIcon style={{ marginLeft: '3px' }} />
+              </span>
+            </div>
+          </>
         ) : (
           <div
             {...getRootProps()}
@@ -67,5 +82,4 @@ const UploadVideo = ({ onDrop, isUpload }) => {
     </div>
   );
 };
-
 export default UploadVideo;

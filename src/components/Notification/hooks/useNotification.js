@@ -63,7 +63,7 @@ const useNotification = () => {
   const confirmDeleteHandler = () => setOpenDelete(false);
   const handleCloseDelete = () => setOpenDelete(false);
   const openDeleteDialog = () => setOpenDelete(true);
-  const handleAddNotification = () => navigate('/addNotification');
+  const handleAddNotification = () => navigate('/notification/addNotification');
 
   return {
     data: currentItems,
