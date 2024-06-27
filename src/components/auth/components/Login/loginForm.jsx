@@ -46,8 +46,11 @@ const LoginForm = () => {
       onSuccessRoute: getRouteByName('dashboard')?.route || '/',
       onSuccess: response => {
         console.log('🚀 ~ onLoginHandler ~ response:', response);
-        StoreDispatch({ type: 'signIn', user: response.data.data });
-        navigate('questionBank' || getRouteByName('dashboard')?.route || '/');
+        StoreDispatch({ type: 'Login', user: response.data.data });
+        localStorage.setItem('user', JSON.stringify(response.data.data));
+        console.log('Store updated:', response.data.data);
+        navigate('/dashboard'); // Hardcoded for testing
+        console.log('Navigating to /dashboard...');
       },
       onError: err => {
         setResponseErr(err?.response?.data?.message || err.message);

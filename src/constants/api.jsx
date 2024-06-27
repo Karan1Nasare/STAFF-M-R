@@ -2,7 +2,7 @@ const URLS = {
   userToken: '',
   HOST_URL: 'https://superadmin.mandreducation.in',
   SUFFIX_URL: '/api/v1',
-  DASHBOARD: () => `/super-admins/dashboard`,
+  DASHBOARD: () => `/staff/dashboard`,
   GET_PLAN: () => `/plans`,
   GET_ADMINS: () => `/superadmin/admins`,
   ADD_PLAN: () => `/plans`,

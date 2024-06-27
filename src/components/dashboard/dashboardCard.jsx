@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Typography } from '@mui/material';
 import totalOrganizationsIcon from '../../assets/icon/totalOrganizationsIcon.svg';
 import totalContentsIcon from '../../assets/icon/totalContentsIcon.svg';
 import totalQuestionBank from '../../assets/icon/totalQuestionBank.svg';
+import useFetcher from '../../hooks/useFetcher';
+import axiosInstance from '../../utilities/axios-client';
+import URLS from '../../constants/api';
 
 const DashboardCards = () => {
+  // const [data, setData] = useState(null);
+  // const { fetcher, getExecutorState } = useFetcher();
+  // const { isLoading, error } = getExecutorState('dashboard');
+
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     fetcher({
+  //       key: 'dashboard',
+  //       executer: () => axiosInstance.get(URLS.DASHBOARD()),
+  //       onSuccess: res => setData(res?.data?.data),
+  //     });
+  //   };
+  //   fetchData();
+  // }, []);
+
   const card = [
     {
       icon: totalOrganizationsIcon,

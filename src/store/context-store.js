@@ -7,9 +7,8 @@ import React, {
 } from 'react';
 
 const InitialState = {
-  user: null, // user object for the app.
+  user: null,
   userStatus: false,
-  // redirectToUrl: "",
   otpTimeout: false,
   isConnected: undefined,
   enclaveInfo: {},
@@ -26,63 +25,45 @@ export const DefaultState = localStorage.getItem('last_state')
 export const StoreContext = createContext(DefaultState);
 export const StoreDispatchContext = createContext();
 
-export const ContextStoreProvider = ({ children }) => {
-  const StateReducer = (State, action) => {
-    console.log(action.type, action);
+const StateReducer = (State, action) => {
+  console.log(action.type, action);
 
-    switch (action.type) {
-      /** @note Keeping the user actions same as opCodes passed from the backend to keep it in sync */
-      case 'signIn': {
-        const state = { ...State };
-        state.user = action.user;
-        localStorage.setItem('last_state', JSON.stringify(state));
-        return state;
-      }
-
-      case 'browser_reload': {
-        // console.log("browser_reload");
-        localStorage.setItem('last_state', JSON.stringify({ ...State }));
-        return State;
-      }
-
-      case 'RemoveState': {
-        localStorage.removeItem('last_state');
-        localStorage.removeItem('otpTimeout');
-        return InitialState;
-      }
-
-      case 'Log': {
-        console.log(action);
-        break;
-      }
-
-      case 'ADD_QUESTION_BANK': {
-        return {
-          ...State,
-          questionBanks: [action?.payload],
-        };
-      }
-      case 'AddAdminDetails': {
-        console.log('AdminData', action);
-        const state = { ...State };
-        state.AdminData = action.AdminData;
-        return state;
-      }
-      // case "REDIRECT_TO": {
-      //   const state = { ...State };
-      //   if(!action.redirectToUrl.includes("sign-in")){
-      //     state.redirectToUrl = action.redirectToUrl;
-      //   }
-      //   State = state;
-      //   return State;
-      // }
-      default: {
-        return DefaultState;
-      }
+  switch (action.type) {
+    case 'Login': {
+      const state = { ...State, user: action.user };
+      localStorage.setItem('last_state', JSON.stringify(state));
+      return state;
     }
-    return null;
-  };
 
+    case 'RemoveState': {
+      localStorage.removeItem('last_state');
+      return InitialState;
+    }
+
+    case 'Log': {
+      console.log(action);
+      return State;
+    }
+
+    case 'ADD_QUESTION_BANK': {
+      return {
+        ...State,
+        questionBanks: [...State.questionBanks, action.payload],
+      };
+    }
+
+    case 'AddAdminDetails': {
+      console.log('AdminData', action);
+      return { ...State, AdminData: action.AdminData };
+    }
+
+    default: {
+      return State;
+    }
+  }
+};
+
+export const ContextStoreProvider = ({ children }) => {
   const [State, StateDispatch] = useReducer(StateReducer, DefaultState);
 
   const Store = useMemo(() => [State, StateDispatch], [State]);
