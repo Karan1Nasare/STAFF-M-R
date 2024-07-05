@@ -122,7 +122,7 @@ const AppRoutes = [
   {
     name: 'dashboard',
     slug: 'dashboard',
-    route: '/',
+    route: '/dashboard',
     component: Dashboard,
     icon: '',
     external: false,

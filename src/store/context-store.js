@@ -16,6 +16,7 @@ const InitialState = {
   selectedEnclave: {},
   questionBanks: [],
   AdminData: {},
+  MaterialContent: {},
 };
 
 /** @fixme Decode the last state when fetching from localstorage and then assign. */
@@ -27,15 +28,16 @@ export const StoreContext = createContext(DefaultState);
 export const StoreDispatchContext = createContext();
 
 export const ContextStoreProvider = ({ children }) => {
+  // eslint-disable-next-line consistent-return
   const StateReducer = (State, action) => {
     console.log(action.type, action);
 
     switch (action.type) {
       /** @note Keeping the user actions same as opCodes passed from the backend to keep it in sync */
-      case 'signIn': {
+      case 'Login': {
         const state = { ...State };
         state.user = action.user;
-        localStorage.setItem('last_state', JSON.stringify(State));
+        localStorage.setItem('last_state', JSON.stringify(state));
         return state;
       }
 
@@ -53,7 +55,7 @@ export const ContextStoreProvider = ({ children }) => {
 
       case 'Log': {
         console.log(action);
-        break;
+        return State;
       }
 
       case 'ADD_QUESTION_BANK': {
@@ -68,6 +70,12 @@ export const ContextStoreProvider = ({ children }) => {
         state.AdminData = action.AdminData;
         return state;
       }
+      case 'AddContentDetails': {
+        console.log('Material Details', action);
+        const state = { ...State };
+        state.MaterialContent = action.MaterialContent;
+        return state;
+      }
       // case "REDIRECT_TO": {
       //   const state = { ...State };
       //   if(!action.redirectToUrl.includes("sign-in")){
@@ -80,7 +88,7 @@ export const ContextStoreProvider = ({ children }) => {
         return DefaultState;
       }
     }
-    return null;
+    // return null;
   };
 
   const [State, StateDispatch] = useReducer(StateReducer, DefaultState);

@@ -1,3 +1,5 @@
+/* eslint-disable no-param-reassign */
+/* eslint-disable no-return-assign */
 // form
 import { useFormContext, Controller } from 'react-hook-form';
 import {
@@ -11,9 +13,15 @@ import {
 } from '@mui/material';
 import React from 'react';
 
-export function RHFCheckbox({ name, helperText, ...other }) {
-  const { control } = useFormContext();
-
+export function RHFCheckbox({
+  name,
+  onChange,
+  checked,
+  value,
+  helperText,
+  ...other
+}) {
+  const { control, setValue } = useFormContext();
   return (
     <Controller
       name={name}
@@ -21,7 +29,14 @@ export function RHFCheckbox({ name, helperText, ...other }) {
       render={({ field, fieldState: { error } }) => (
         <div>
           <FormControlLabel
-            control={<Checkbox {...field} checked={field.value} />}
+            control={
+              <Checkbox
+                // eslint-disable-next-line no-param-reassign
+                {...(field.onChange = onChange)}
+                {...field}
+                checked={field.value === value}
+              />
+            }
             {...other}
           />
           {(!!error || helperText) && (

@@ -6,14 +6,14 @@ import {
   FormControl,
   FormHelperText,
   InputLabel,
-  MenuItem,
   OutlinedInput,
   Select,
 } from '@mui/material';
 import React from 'react';
 import CustomTextField from '../../components/ui/Form/CustomTextField';
 import colors from '../../theme/colors';
-
+import TextField from '../../components/shared/input/TextField';
+import MenuItem from '../../components/shared/menuitem/MenuItem';
 // RHFSelect component
 export function RHFSelect({
   name,
@@ -38,7 +38,8 @@ export function RHFSelect({
             </InputLabel>
           )}
 
-          <Select
+          <TextField
+            select
             {...field}
             labelId={name}
             input={
@@ -76,7 +77,7 @@ export function RHFSelect({
                   </MenuItem>
                 );
               })}
-          </Select>
+          </TextField>
 
           {(!!error || helperText) && (
             <FormHelperText error={!!error}>

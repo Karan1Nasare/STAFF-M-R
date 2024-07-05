@@ -97,6 +97,7 @@ export const APIClient2 = () => {
       return newConfig;
     },
     error => {
+      console.log('error axios', error);
       if (error?.response?.status === 401) {
         StoreDispatch({ type: 'RemoveState' });
       }

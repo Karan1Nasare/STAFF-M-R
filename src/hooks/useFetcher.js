@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../store/context-store';
@@ -29,11 +29,10 @@ const useFetcher = () => {
 
     try {
       const response = await executer();
-      console.log('🚀 ~ useFetcher ~ response:', response.status);
-
       if (response.status === 200) {
         onSuccess?.(response);
         if (showSuccessToast) {
+          toast.dismiss();
           toast.success(ToastMessage || response.data?.message, {
             position: 'top-right',
             icon: SuccessIcon,
@@ -67,6 +66,7 @@ const useFetcher = () => {
         errorMessage = error.response.data.message;
       }
       if (showErrorToast) {
+        toast.dismiss();
         toast.error(ToastMessage || errorMessage, {
           position: 'top-right',
           icon: ErrorIcon,

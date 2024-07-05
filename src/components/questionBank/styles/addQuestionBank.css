@@ -1,0 +1,12 @@
+.MuiSelect-select,.MuiSelect-outlined{
+    height: 0.6250em !important;
+    min-height: 0.6250em !important;
+}
+.MuiSelect-select{
+    color: #fff !important;
+    display: flex !important;
+    align-items: center !important;
+}
+.MuiTextField-root{
+    height: 42px !important;
+}

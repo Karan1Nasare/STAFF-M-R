@@ -10,6 +10,7 @@ const AuthGuard = ({ children, rObj }) => {
   const outlet = useOutlet();
   const [isValid, setValid] = useState(true);
   useEffect(() => {
+    console.log(Store, 'store');
     if (!Store?.user?.token) {
       StoreDispatch({ type: 'RemoveState' });
       setValid(false);
