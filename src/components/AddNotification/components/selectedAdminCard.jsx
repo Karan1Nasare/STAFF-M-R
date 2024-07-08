@@ -2,7 +2,7 @@ import React from 'react';
 import { Icon } from '@iconify/react';
 import AdminProfile from '../../../assets/adminProfile.png';
 
-const SelectedAdminCard = ({ data, toggleChecked, handleRemoveAdmin }) => {
+const SelectedAdminCard = ({ data, handleRemoveAdmin }) => {
   console.log('🚀 ~ SelectedAdminCard ~ data:', data);
   return (
     <>
@@ -34,7 +34,7 @@ const SelectedAdminCard = ({ data, toggleChecked, handleRemoveAdmin }) => {
                       width={24}
                       height={24}
                       className='cursor-pointer my-auto'
-                      onClick={() => handleRemoveAdmin(index)}
+                      onClick={() => handleRemoveAdmin(card.id)} // Call handleRemoveAdmin with admin ID
                     ></Icon>
                   </div>
                   <div className='flex mt-4 pt-2 px-2 justify-between'>
@@ -67,5 +67,4 @@ const SelectedAdminCard = ({ data, toggleChecked, handleRemoveAdmin }) => {
     </>
   );
 };
-
 export default SelectedAdminCard;

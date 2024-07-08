@@ -1,10 +1,11 @@
+// Update data state when initialData is fetched
 import React, { useEffect, useState } from 'react';
 import { RHFSelect } from '../../../hooks/hook-form';
 import SelectAdminDialog from './dialog/selectAdmin';
 import SelectedAdminCard from './selectedAdminCard';
 
 const Header = ({
-  data,
+  data: initialData,
   isEditOpen,
   searchInputValue,
   selectAllAdmin,
@@ -16,35 +17,35 @@ const Header = ({
   selectedAdminIds,
   setSelectedAdminIds,
 }) => {
+  const [data, setData] = useState([]);
   const handleRemoveAdmin = idToRemove => {
     const updatedAdminIds = selectedAdminIds.filter(id => id !== idToRemove);
+    setSelectedAdminIds(updatedAdminIds);
     const updatedData = data.map(admin => {
       if (admin.id === idToRemove) {
         return { ...admin, isChecked: false };
       }
       return admin;
     });
-    setSelectedAdminIds(updatedAdminIds);
-    // Update your data state here if needed
+    setData(updatedData);
   };
-
+  useEffect(() => {
+    if (initialData && initialData.length > 0) {
+      setData(initialData);
+    }
+  }, [initialData]);
   useEffect(() => {
     const selectedIds = data
       .filter(admin => admin.isChecked)
       .map(admin => admin.id);
     setSelectedAdminIds(selectedIds);
   }, [data]);
-
   const hasCheckedAdmins = selectedAdminIds.length > 0;
-
   return (
     <>
       {!hasCheckedAdmins ? (
         <div className='select mt-6'>
           <div className='flex justify-end'>
-            <div className='bg-secondary__fill w-[10%]'>
-              <RHFSelect name={'adminId'} />
-            </div>
             <button
               onClick={openAdminDialog}
               className='bg-white ml-4 w-28 rounded-md p-1 h-10 text-sm'
@@ -78,5 +79,4 @@ const Header = ({
     </>
   );
 };
-
 export default Header;
