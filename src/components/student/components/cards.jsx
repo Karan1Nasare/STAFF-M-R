@@ -32,16 +32,18 @@ const Cards = ({ cards }) => {
               <div className='flex flex-col gap-1'>
                 <h3 className=' text-grey__primary__light text-xs'>Standard</h3>
                 <div className=' mt-1 lg:w-16 bg-tealGreen bg-opacity-20 w-12 rounded-full p-[2px]'>
-                  <h3 className='text-tealGreen text-sm'>{card.standard}</h3>
+                  <h3 className='text-tealGreen text-sm'>
+                    {card?.user_details?.course_id}
+                  </h3>
                 </div>
               </div>
               <div className='flex flex-col gap-1'>
-                <h3 className='text-grey__primary__light text-xs'>
+                <h3 className='text-grey__primary__light text-xs text-right'>
                   Enrollment
                 </h3>
-                <div className=' mt-1 bg-success bg-opacity-20 w-20 pl-2 rounded-full p-[2px]'>
+                <div className=' mt-1 bg-success bg-opacity-20  pl-2 rounded-full p-[2px]'>
                   <h3 className='text-success mr-2 text-sm '>
-                    {card.enrollment}
+                    {card?.enrollment_no}
                   </h3>
                 </div>
               </div>

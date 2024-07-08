@@ -28,42 +28,13 @@ const ChangeProfileIamge = ({ setIsChangeProfile }) => {
 
   return (
     <>
-      <div className='bg-darkBlue p-6 mt-5 rounded-lg shadow-lg flex items-center justify-between'>
-        <div className='flex items-center'>
-          <div className='flex items-center justify-center'>
-            <div className='w-32 h-32 rounded-full overflow-hidden'>
-              <img
-                src={ProfileImage}
-                alt='Circular'
-                className='object-cover w-full h-full'
-              />
-            </div>
-          </div>
-          <div className='ml-4 text-start'>
-            <p className='text-white text-lg'>Upload Your Banner</p>
-            <p className='text-gray-400 text-sm'>
-              Allowed JPG, GIF or PNG. Max size of 800K
-            </p>
-          </div>
-        </div>
-        <div className='flex items-center'>
-          <label
-            className='flex items-center h-12 px-4 py-2 bg-white text-black rounded cursor-pointer hover:bg-gray-200 transition-colors duration-200 mr-2'
-            onClick={() => {
-              setIsChangeProfile(true);
-            }}
-          >
-            <UploadFileIcon className='mr-2 text-xl' />
-            Change
-          </label>
-
-          <button
-            onClick={handleDeleteClick}
-            className='flex items-center h-12 px-4 py-2 bg-delete text-delete bg-opacity-20 rounded  transition-colors duration-200 mr-2'
-          >
-            <DeleteIcon className='mr-2 text-xl' />
-            Remove
-          </button>
+      <div className='flex items-center bg-secondary__fill mt-2 h-44 w-44 justify-center'>
+        <div className='w-32 h-32'>
+          <img
+            src={ProfileImage}
+            alt='Circular'
+            className='object-cover w-full h-full'
+          />
         </div>
       </div>
       <ProfileDetailInfo />

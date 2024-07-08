@@ -55,6 +55,17 @@ const AddContent = lazy(
   () => import('./components/MaterialContent/TabContainer'),
 );
 
+const Exam = lazy(() => import('./components/Exam'));
+const ExamQuestionBank = lazy(
+  () => import('./components/Exam/questionBank/index'),
+);
+const CreateExamPaper = lazy(
+  () => import('./components/Exam/createExamPaper/index'),
+);
+const AddExamBasicDetails = lazy(
+  () => import('./components/Exam/addExamBasicDetails/index'),
+);
+
 const Notifications = lazy(() => import('./pages/NotificationPage'));
 const AddNotification = lazy(() => import('./pages/AddNotificationPage'));
 
@@ -128,7 +139,7 @@ const AppRoutes = [
     external: false,
     auth: true,
     wrapper: LayoutWrapper,
-    parent: 'dashboard',
+    parent: '/',
   },
 
   // This screen is for Master Admin
@@ -168,7 +179,7 @@ const AppRoutes = [
   {
     name: 'studentAttendance',
     slug: 'studentAttendance',
-    route: '/studentAttendance',
+    route: '/student/studentAttendance',
     component: StudentAttendance,
     icon: '',
     external: false,
@@ -186,6 +197,50 @@ const AppRoutes = [
     auth: true,
     wrapper: LayoutWrapper,
     parent: 'student',
+  },
+  {
+    name: 'exam',
+    slug: 'exam',
+    route: `/exam`,
+    component: Exam,
+    menu_location: '',
+    icon: '',
+    external: false,
+    auth: true,
+    wrapper: LayoutWrapper,
+  },
+  {
+    name: 'examQuestionBank',
+    slug: 'examQuestionBank',
+    route: `/exam/examQuestionBank`,
+    component: ExamQuestionBank,
+    menu_location: '',
+    icon: '',
+    external: false,
+    auth: true,
+    wrapper: LayoutWrapper,
+  },
+  {
+    name: 'createExamPaper',
+    slug: 'createExamPaper',
+    route: `/exam/createExamPaper`,
+    component: CreateExamPaper,
+    menu_location: '',
+    icon: '',
+    external: false,
+    auth: true,
+    wrapper: LayoutWrapper,
+  },
+  {
+    name: 'addExamBasicDetails',
+    slug: 'addExamBasicDetails',
+    route: `/exam/addExamBasicDetails`,
+    component: AddExamBasicDetails,
+    menu_location: '',
+    icon: '',
+    external: false,
+    auth: true,
+    wrapper: LayoutWrapper,
   },
   {
     name: 'addBanner',
@@ -250,7 +305,7 @@ const AppRoutes = [
   {
     name: 'addQuestions',
     slug: 'addQuestions',
-    route: `/addQuestions`,
+    route: `/questionBank/addQuestions`,
     component: AddQuestions,
     menu_location: '',
     icon: '',
@@ -261,7 +316,7 @@ const AppRoutes = [
   {
     name: 'review',
     slug: 'review',
-    route: `/review`,
+    route: `/questionBank/review`,
     component: Review,
     menu_location: '',
     icon: '',
@@ -342,6 +397,17 @@ const AppRoutes = [
     auth: true,
     wrapper: LayoutWrapper,
   },
+  {
+    name: 'exam',
+    slug: 'exam',
+    route: `/exam`,
+    component: Exam,
+    menu_location: '',
+    icon: '',
+    external: false,
+    auth: true,
+    wrapper: LayoutWrapper,
+  },
 
   // Notification Route
   {
@@ -358,7 +424,7 @@ const AppRoutes = [
   {
     name: 'addNotification',
     slug: 'addNotification',
-    route: '/addNotification',
+    route: '/notification/addNotification',
     component: AddNotification,
     menu_location: '',
     icon: '',

@@ -54,7 +54,7 @@ const Header = ({ inputValue, handleInputChange, handleSearchClick }) => {
               padding: '10px 16px',
               borderRadius: '6px',
             }}
-            onClick={() => navigate('/studentAttendance')}
+            onClick={() => navigate('/student/studentAttendance')}
           >
             <Icon icon={'simple-line-icons:plus'} />
             Student Attendance

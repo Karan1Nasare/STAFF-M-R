@@ -14,30 +14,48 @@ const SuperAdminSideBar = () => {
       navigate(getRouteByName(value.name)?.route);
     });
   }, []);
+  const isRouteActive = routeName => {
+    const route = getRouteByName(routeName);
+    if (route) {
+      const isActive =
+        location.pathname === route.route ||
+        location.pathname.startsWith(`${route.route}/`);
+      if (route.parent) {
+        const parentRoute = getRouteByName(route.parent);
+        if (parentRoute) {
+          return (
+            isActive || location.pathname.startsWith(`${parentRoute.route}/`)
+          );
+        }
+      }
+      return isActive;
+    }
+    return false;
+  };
   const menuList = [
     {
       label: 'Dashboard',
       icon: 'ic:baseline-space-dashboard',
       name: 'dashboard',
-      isActive: ['/', '/dashboard'].includes(location.pathname),
+      isActive: isRouteActive('dashboard'),
     },
     {
-      label: 'Students',
-      icon: 'hugeicons:message-multiple-01',
+      label: 'Student',
+      icon: 'ic:baseline-space-dashboard',
       name: 'student',
-      isActive: location.pathname === getRouteByName('student')?.route,
+      isActive: isRouteActive('student'),
     },
     {
       label: 'Exam',
-      icon: 'flowbite:user-settings-solid',
-      name: 'questionBank',
-      isActive: location.pathname === getRouteByName('questionBank')?.route,
+      icon: 'ic:baseline-space-dashboard',
+      name: 'exam',
+      isActive: isRouteActive('exam'),
     },
     {
       label: 'Material',
-      icon: 'mage:file-2-fill',
+      icon: 'ic:baseline-space-dashboard',
       name: 'material',
-      isActive: location.pathname === getRouteByName('material')?.route,
+      isActive: isRouteActive('material'),
     },
     {
       label: 'Question Bank',
@@ -47,14 +65,14 @@ const SuperAdminSideBar = () => {
     },
     {
       label: 'Notification',
-      icon: 'mdi:announcement',
+      icon: 'mage:file-2-fill',
       name: 'notification',
       isActive: location.pathname === getRouteByName('notification')?.route,
     },
   ];
   return (
     <div className='flex flex-col text-lg text-start text-white '>
-      <div className='ml-8'>
+      <div className='ml-5'>
         <Typography variant='sidebar_menu_h' className='uppercase'>
           Main Menu
         </Typography>
@@ -62,7 +80,7 @@ const SuperAdminSideBar = () => {
       {menuList.map((value, index) => (
         <div
           key={index}
-          className={`h-12 ml-4 p-4 items-start mt-4 w-full rounded-md  ${
+          className={`h-12 ml-1 p-4 items-start mt-4 w-full rounded-md  ${
             value.isActive
               ? 'bg-sidebar_active text-primary'
               : 'bg-secondary__fill hover:bg-sidebar_active hover:text-primary'

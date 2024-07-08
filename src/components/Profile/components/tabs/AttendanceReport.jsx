@@ -64,15 +64,21 @@ const AttendanceReport = ({ apiEndpoint }) => {
   console.log('Rendering component with data:', data);
 
   return (
-    <div className='p-4 bg-white rounded-lg shadow-md'>
+    <div className='p-4 bg-transparent rounded-lg shadow-md'>
       <Box className='flex items-center mb-4'>
         <Box className='h-7 w-1 bg-orange-400 rounded-3xl mr-2'></Box>
-        <Typography variant='h6'>Chirag Gondaliya Details</Typography>
+        <Typography variant='h6' className='text-white'>
+          Chirag Gondaliya Details
+        </Typography>
       </Box>
       <Box className='flex space-x-4'>
         {data.reports.map((report, index) => (
           <Box key={index} className='flex flex-col items-start space-y-4'>
-            <FormControl fullWidth variant='outlined' className='mb-4'>
+            <FormControl
+              fullWidth
+              variant='outlined'
+              className='mb-4 border border-gray-700'
+            >
               <InputLabel>Select Month</InputLabel>
               <Select
                 value={selectedMonths[index] || ''}
@@ -86,7 +92,7 @@ const AttendanceReport = ({ apiEndpoint }) => {
                 ))}
               </Select>
             </FormControl>
-            <Box className='p-6 bg-slate-900 text-white rounded-xl border border-gray-700'>
+            <Box className='p-6 bg-secondary__fill text-white rounded-xl border border-gray-700'>
               <Typography variant='h6' className='mb-4'>
                 Attendance Report
               </Typography>

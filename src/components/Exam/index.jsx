@@ -1,11 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
+import Question from './question';
 
-const Index = () => {
+const QuestionBank = () => {
   return (
-    <div>
-      <div></div>
+    <div className='ml-[1%] overflow-x-hidden '>
+      <Question />
     </div>
   );
 };
-
-export default Index;
+export default QuestionBank;

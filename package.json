@@ -21,6 +21,7 @@
     "draft-js": "^0.11.7",
     "enforce-branch-name": "^1.1.2",
     "eslint-plugin-jest": "^28.5.0",
+    "moment": "^2.30.1",
     "postcss": "^8.4.38",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
