@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { IoCloseOutline } from 'react-icons/io5';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
+import useFetcher from '../../../../hooks/useFetcher';
+import axiosInstance from '../../../../utilities/axios-client';
+import URLS from '../../../../constants/api';
 
-const FilterPopup = ({ show, onClose, onFilter }) => {
+const FilterPopup = ({
+  show,
+  onClose,
+  onFilter,
+  standerds,
+  setStudents,
+  setFilteredStudents,
+  selectedDate,
+  subjects,
+  setSubjects,
+}) => {
+  const { fetcher, getExecutorState } = useFetcher();
+  const { isLoading } = getExecutorState('getstandards');
   const [selectedStandards, setSelectedStandards] = useState([]);
+  console.log('🚀 ~ selectedStandards:', selectedStandards);
   const [selectedDates, setSelectedDates] = useState([]);
-
+  const [selectedsubjects, setSelectedsubjects] = useState([]);
   const handleButtonClick = (value, type) => {
     if (type === 'standard') {
       if (selectedStandards.includes(value)) {
@@ -14,7 +30,7 @@ const FilterPopup = ({ show, onClose, onFilter }) => {
           selectedStandards.filter(button => button !== value),
         );
       } else {
-        setSelectedStandards([...selectedStandards, value]);
+        setSelectedStandards([value]);
       }
     } else if (type === 'date') {
       if (selectedDates.includes(value)) {
@@ -31,7 +47,25 @@ const FilterPopup = ({ show, onClose, onFilter }) => {
   };
 
   const handleFilter = () => {
-    onFilter(selectedStandards, selectedDates);
+    const subjectsId = subjects.filter(
+      standard => standard.name === selectedsubjects[0],
+    );
+    // fetcher({
+    //   key: 'getstudents',
+    //   executer: () =>
+    //     axiosInstance.get(`${URLS.GET_STUDENTS}`, {
+    //       params: {
+    //         date: selectedDate.getTime(),
+    //         courses: [selectedsubjects[0].id],
+    //         subject: subjectsId,
+    //       },
+    //     }),
+    //   onSuccess: ({ data: res }) => {
+    //     setStudents(res.data);
+    //     setFilteredStudents(res.data);
+    //   },
+    // });
+    onFilter(selectedStandards, selectedDates, selectedsubjects);
   };
 
   const buttonClasses = (value, type) =>
@@ -42,10 +76,21 @@ const FilterPopup = ({ show, onClose, onFilter }) => {
         : 'bg-transparent text-white border-gray-700'
     }`;
 
+  useEffect(() => {
+    fetcher({
+      key: 'getstandards',
+      executer: () =>
+        axiosInstance.get(`${URLS.GET_ALL_COURSES}`, {
+          params: { course_id: selectedStandards[0].id },
+        }),
+      onSuccess: ({ data: res }) => {
+        setSubjects(res.data);
+      },
+    });
+  }, [selectedStandards]);
   if (!show) {
     return null;
   }
-
   return (
     <div className='fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50'>
       <div
@@ -75,22 +120,35 @@ const FilterPopup = ({ show, onClose, onFilter }) => {
           />
           <div className='text-white'>
             <div className='mb-4 ml-[30px] text-left mt-4'>
-              <h3 className='mt-4'>Standard</h3>
+              <h3 className='mt-4'>Standard {isLoading && 'Loading...'}</h3>
               <div className='flex gap-2 mt-4'>
-                {['All', 'Std-7', 'Std-8', 'Std-9', 'Std-10', 'Std-12'].map(
-                  standard => (
-                    <button
-                      key={standard}
-                      className={buttonClasses(standard, 'standard')}
-                      onClick={() => handleButtonClick(standard, 'standard')}
-                    >
-                      {standard}
-                    </button>
-                  ),
-                )}
+                {standerds.map(item => (
+                  <button
+                    key={item?.id}
+                    className={buttonClasses(item, 'standard')}
+                    onClick={() => setSelectedStandards([item])}
+                  >
+                    {item?.name}
+                  </button>
+                ))}
               </div>
             </div>
             <div className='mt-4'>
+              <h3 className='mb-4 ml-[30px] text-left mt-4'>Subject</h3>
+              <div className='flex gap-2 flex-wrap mb-4 ml-[30px] text-left mt-4'>
+                {subjects.map(item => (
+                  <button
+                    key={item?.id}
+                    className={`py-2 px-4 rounded border text-sm ${selectedsubjects.includes(item) ? 'bg-white text-[#3B3E48] border-gray-700' : 'bg-transparent text-white  border-gray-700'}  p-2`}
+                    onClick={() => setSelectedsubjects([item])}
+                  >
+                    {item?.name}
+                  </button>
+                ))}
+              </div>
+              {/* <Calendar className='bg-[#081028] text-white p-4 rounded-lg centered-calendar block mx-auto mt-4 ml-[30px]' /> */}
+            </div>
+            {/* <div className='mt-4'>
               <h3 className='mb-4 ml-[30px] text-left mt-4'>Select Date</h3>
               <div className='flex gap-2 mb-4 ml-[30px] text-left mt-4'>
                 {[
@@ -109,8 +167,8 @@ const FilterPopup = ({ show, onClose, onFilter }) => {
                   </button>
                 ))}
               </div>
-              {/* <Calendar className='bg-[#081028] text-white p-4 rounded-lg centered-calendar block mx-auto mt-4 ml-[30px]' /> */}
-            </div>
+              <Calendar className='bg-[#081028] text-white p-4 rounded-lg centered-calendar block mx-auto mt-4 ml-[30px]' />
+            </div> */}
           </div>
           <div className='ml-[60%]'>
             <button

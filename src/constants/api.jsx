@@ -91,7 +91,9 @@ const URLS = {
   GET_ALL_COURSES: '/getallcoursedata',
   CREATE_EXAM_PAPER: '/exam-papers',
   CREATE_EXAM: '/exams',
-  GET_STUDENTS: '/students',
+  STUDENTS: '/students',
+  GET_STUDENTS: '/student-attendance',
+  STUDENTS_ATTENDANCE: '/student-attendance/store-update',
   GET_MATERIAL_OPTION: (courseId, subjectId, chapterId) => {
     let url = '/getallcoursedata?';
     if (courseId) url += `course_id=${courseId}`;

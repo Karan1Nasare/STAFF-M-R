@@ -6,6 +6,9 @@ import { Icon } from '@iconify/react';
 import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import FilterPopup from './FilterPopup'; // Import the new popup component
+import useFetcher from '../../../../hooks/useFetcher';
+import axiosInstance from '../../../../utilities/axios-client';
+import URLS from '../../../../constants/api';
 
 const Modal = ({ show, onClose, children }) => {
   if (!show) {
@@ -39,14 +42,23 @@ const SelectedItem = ({ label, onRemove }) => (
   </div>
 );
 
-const StudentAttendanceHeader = ({ onSearch }) => {
+const StudentAttendanceHeader = ({
+  onSearch,
+  setStudents,
+  setFilteredStudents,
+  attendance,
+}) => {
+  const { fetcher } = useFetcher();
+
   const [searchTerm, setSearchTerm] = useState('');
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [filterPopupOpen, setFilterPopupOpen] = useState(false);
   const [selectedStandards, setSelectedStandards] = useState([]);
   const [selectedDates, setSelectedDates] = useState([]);
-  console.log('🚀 ~ StudentAttendanceHeader ~ selectedDates:', selectedDate);
+  const [selectedsubjects, setSelectedsubjects] = useState(null);
+  const [standerds, setStandards] = useState([]);
+  const [subjects, setSubjects] = useState([]);
 
   const handleSearchChange = e => {
     setSearchTerm(e.target.value);
@@ -77,14 +89,17 @@ const StudentAttendanceHeader = ({ onSearch }) => {
     setFilterPopupOpen(false);
   };
 
-  const handleFilter = (standards, dates) => {
+  const handleFilter = (standards, dates, filtersubjects) => {
     setSelectedStandards(standards);
     setSelectedDates(dates);
     setFilterPopupOpen(false);
+    setSelectedsubjects(filtersubjects);
   };
 
-  const removeSelectedStandard = standard => {
-    setSelectedStandards(selectedStandards.filter(item => item !== standard));
+  const removeSelectedStandard = standardId => {
+    setSelectedStandards(
+      selectedStandards.filter(item => item.id !== standardId),
+    );
   };
 
   const removeSelectedDate = () => {
@@ -156,7 +171,32 @@ const StudentAttendanceHeader = ({ onSearch }) => {
       document.head.removeChild(style);
     };
   }, []);
-
+  useEffect(() => {
+    fetcher({
+      key: 'getallcourses',
+      executer: () => axiosInstance.get(`${URLS.GET_ALL_COURSES}`),
+      onSuccess: ({ data: res }) => {
+        const standards = res.data.map(standard => ({
+          name: standard.name,
+          id: standard.id,
+        }));
+        // standards.push({ name: 'All', id: 'all' });
+        setStandards(standards);
+      },
+    });
+  }, []);
+  const handlesave = () => {
+    fetcher({
+      key: 'student-attendance',
+      executer: () =>
+        axiosInstance.post(`${URLS.STUDENTS_ATTENDANCE}`, {
+          course_id: selectedStandards[0],
+          subject_id: selectedsubjects[0].id,
+          attendance,
+        }),
+      showSuccessToast: true,
+    });
+  };
   return (
     <div className='w-full max-w-screen mx-auto overflow-y-scroll relative'>
       <h1 className='text-white text-3xl text-left'>Student</h1>
@@ -201,22 +241,52 @@ const StudentAttendanceHeader = ({ onSearch }) => {
             )}
             {selectedStandards.map(standard => (
               <SelectedItem
-                key={standard}
-                label={standard}
-                onRemove={() => removeSelectedStandard(standard)}
+                key={standard?.id}
+                label={standard?.name}
+                onRemove={() => removeSelectedStandard(standard?.id)}
               />
             ))}
+            {selectedsubjects?.length > 0 && (
+              <SelectedItem
+                label={`Subjects: ${selectedsubjects
+                  .map(subject => subject.name)
+                  .join(', ')}`}
+                onRemove={() => setSelectedsubjects([])}
+              />
+            )}
           </div>
         </div>
-        <div className='ml-auto justify-center px-4 py-2.5 text-sm leading-6 text-center text-black whitespace-nowrap bg-white rounded-lg cursor-pointer'>
+        <button
+          className={`ml-auto justify-center px-4 py-2.5 text-sm leading-6 text-center text-black whitespace-nowrap bg-white rounded-lg cursor-pointer ${
+            selectedStandards?.length === 0 ||
+            selectedsubjects?.length === 0 ||
+            !selectedDate ||
+            attendance?.length === 0
+              ? 'opacity-50 cursor-not-allowed'
+              : 'opacity-100'
+          }`}
+          onClick={handlesave}
+          disabled={
+            selectedStandards?.length === 0 ||
+            selectedsubjects?.length === 0 ||
+            !selectedDate ||
+            attendance?.length === 0
+          }
+        >
           Save
-        </div>
+        </button>
       </div>
 
       <FilterPopup
         show={filterPopupOpen}
         onClose={handleCloseFilterPopup}
         onFilter={handleFilter}
+        standerds={standerds}
+        setStudents={setStudents}
+        setFilteredStudents={setFilteredStudents}
+        selectedDate={selectedDate}
+        subjects={subjects}
+        setSubjects={setSubjects}
       />
 
       <Modal show={calendarOpen} onClose={handleCloseModal}>

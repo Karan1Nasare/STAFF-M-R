@@ -13,7 +13,6 @@ import URLS from '../../constants/api';
 const Index = () => {
   const { fetcher } = useFetcher();
   const [StudentsData, setStudentsData] = useState([]);
-  console.log('🚀 ~ Index ~ StudentsData:', StudentsData);
   const [inputValue, setInputValue] = useState('');
   const [filteredCards, setFilteredCards] = useState(students);
   const [currentPage, setCurrentPage] = useState(1);
@@ -45,7 +44,7 @@ const Index = () => {
   useEffect(() => {
     fetcher({
       key: 'getstudents',
-      executer: () => axiosInstance.get(`${URLS.GET_STUDENTS}`),
+      executer: () => axiosInstance.get(`${URLS.STUDENTS}`),
       onSuccess: ({ data: res }) => {
         setStudentsData(res.data);
       },
