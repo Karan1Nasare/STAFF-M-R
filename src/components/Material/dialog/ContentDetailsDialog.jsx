@@ -13,12 +13,15 @@ import React from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import { CalendarToday } from '@mui/icons-material';
 
+import DefaultImage from '../../../assets/adminProfile.png';
+
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction='up' ref={ref} {...props} />;
 });
 
 const ContentDetailsDialog = props => {
   const { open, handleClose, data } = props;
+  console.log(data);
   return (
     <React.Fragment>
       <Dialog
@@ -32,7 +35,7 @@ const ContentDetailsDialog = props => {
       >
         <DialogContent>
           <Stack>
-            <Typography sx={{ color: 'white' }}>{data?.title}</Typography>
+            <Typography sx={{ color: 'white' }}>{data?.name}</Typography>
             <IconButton
               aria-label='close'
               onClick={handleClose}
@@ -54,30 +57,42 @@ const ContentDetailsDialog = props => {
               justifyContent={'center'}
               spacing={2}
             >
-              <CardMedia
-                component='img'
-                image={data?.image}
-                alt='Person'
-                sx={{ width: 150, height: 150, borderRadius: 2, mr: 2 }}
-              />
-              <Stack marginLeft={'1.25rem'}>
-                <Typography
-                  variant='h4'
-                  className='text-start'
-                  sx={{
-                    marginLeft: 0,
-                  }}
-                >
-                  {data?.title}
-                </Typography>
-                <Stack direction={'row'} alignItems={'center'}>
-                  <CalendarToday sx={{ fontSize: 16, color: '#98A4AE' }} />
-                  <p className='text-start text-[#98A4AE] text-xs my-3 mx-2'>
-                    {data?.date}
-                  </p>
-                </Stack>
-                <p className='text-left text-xs'>{data?.description}</p>
-              </Stack>
+              <div className='flex w-full'>
+                <CardMedia
+                  component='img'
+                  image={data?.image?.url || DefaultImage}
+                  alt='Person'
+                  sx={{ width: 150, height: 150, borderRadius: 2, mr: 2 }}
+                />
+                <div className='overflow-y-scroll'>
+                  <Stack marginLeft={'1.25rem'}>
+                    <Typography
+                      variant='h4'
+                      className='text-start'
+                      sx={{
+                        marginLeft: 0,
+                      }}
+                    >
+                      {data?.name}
+                    </Typography>
+                    <Stack direction={'row'} alignItems={'center'}>
+                      <CalendarToday sx={{ fontSize: 16, color: '#98A4AE' }} />
+                      <p className='text-start text-[#98A4AE] text-xs my-3 mx-2'>
+                        {data?.created_at || '13 May 2015'}
+                      </p>
+                    </Stack>
+                    <div className='text-left text-xs'>
+                      {data?.description ? (
+                        <div
+                          dangerouslySetInnerHTML={{ __html: data.description }}
+                        />
+                      ) : (
+                        'No description provided'
+                      )}
+                    </div>
+                  </Stack>
+                </div>
+              </div>
             </Stack>
           </Stack>
         </DialogContent>

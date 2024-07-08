@@ -3,7 +3,11 @@ import axiosInstance from '../utilities/axios-client';
 import URLS from '../constants/api';
 import useFetcher from './useFetcher';
 
-const useDefaultStdOption = ({ standard, chapter, subject }) => {
+const useDefaultStdOption = ({
+  standard = '',
+  subject = '',
+  chapter = '',
+} = {}) => {
   console.log('standard, chapter, subject', standard, chapter, subject);
   const { fetcher } = useFetcher();
   const [courseOptions, setCourseOptions] = useState([]);
@@ -33,6 +37,7 @@ const useDefaultStdOption = ({ standard, chapter, subject }) => {
   }, []);
 
   const fetchSubjectOptions = useCallback(courseId => {
+    if (!courseId) return;
     fetcher({
       key: 'get-course-subject-options',
       executer: () => getOptions(courseId),
@@ -45,6 +50,7 @@ const useDefaultStdOption = ({ standard, chapter, subject }) => {
   }, []);
 
   const fetchChapterOptions = useCallback((courseId, subjectId) => {
+    if (!courseId || !subjectId) return;
     fetcher({
       key: 'get-subject-chapter-options',
       executer: () => getOptions(courseId, subjectId),
@@ -57,6 +63,7 @@ const useDefaultStdOption = ({ standard, chapter, subject }) => {
   }, []);
 
   const fetchTopicOptions = useCallback((courseId, subjectId, chapterId) => {
+    if (!courseId || !subjectId || !chapterId) return;
     fetcher({
       key: 'get-chapter-topic-options',
       executer: () => getOptions(courseId, subjectId, chapterId),
@@ -79,13 +86,14 @@ const useDefaultStdOption = ({ standard, chapter, subject }) => {
 
   useEffect(() => {
     console.log('in subject');
-    if (subject) fetchChapterOptions(standard, subject);
-  }, [subject]);
+    if (standard && subject) fetchChapterOptions(standard, subject);
+  }, [subject, standard]);
 
   useEffect(() => {
     console.log('in chapter');
-    if (chapter) fetchTopicOptions(standard, subject, chapter);
-  }, [chapter]);
+    if (standard && subject && chapter)
+      fetchTopicOptions(standard, subject, chapter);
+  }, [chapter, subject, standard]);
 
   return {
     courseOptions,

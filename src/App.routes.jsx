@@ -50,7 +50,8 @@ const AddFeature = lazy(() => import('./pages/AddFeaturePage'));
 const PlanPage = lazy(() => import('./pages/Plan'));
 const ManagePlanPage = lazy(() => import('./pages/ManagePlan'));
 
-const Material = lazy(() => import('./pages/Material/MaterialPage'));
+const Material = lazy(() => import('./components/Material/Content'));
+// const Material = lazy(() => import('./pages/Material/MaterialPage'));
 const AddContent = lazy(
   () => import('./components/MaterialContent/TabContainer'),
 );

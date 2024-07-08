@@ -92,5 +92,12 @@ const URLS = {
   CREATE_EXAM_PAPER: '/exam-papers',
   CREATE_EXAM: '/exams',
   GET_STUDENTS: '/students',
+  GET_MATERIAL_OPTION: (courseId, subjectId, chapterId) => {
+    let url = '/getallcoursedata?';
+    if (courseId) url += `course_id=${courseId}`;
+    if (subjectId) url += `&subject_id=${subjectId}`;
+    if (chapterId) url += `&chapter_id=${chapterId}`;
+    return url;
+  },
 };
 export default URLS;

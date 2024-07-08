@@ -39,34 +39,40 @@ const useSubject = () => {
 
   // edit subject
   const EditSubject = useCallback(async (id, subject) => {
-    try {
-      fetcher({
-        key: 'edit-subject',
-        executer: () => editSubjectById(id, subject),
-        onSuccess: response => {
-          console.log('rresponse: ', response);
-          fetchSubjectList();
-        },
-      });
-    } catch (err) {
-      console.log('error while fetching notifications', err);
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        fetcher({
+          key: 'edit-subject',
+          executer: () => editSubjectById(id, subject),
+          onSuccess: response => {
+            console.log('rresponse: ', response);
+            resolve(true);
+          },
+        });
+      } catch (err) {
+        console.log('error while fetching notifications', err);
+        resolve(false);
+      }
+    });
   }, []);
 
   // delete subject by id
   const DeleteSubjectById = useCallback(async id => {
-    try {
-      fetcher({
-        key: 'delete-subject',
-        executer: () => deleteSubjectById(id),
-        onSuccess: response => {
-          console.log('rresponse: ', response);
-          fetchSubjectList();
-        },
-      });
-    } catch (err) {
-      console.log('error while fetching notifications', err);
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        fetcher({
+          key: 'delete-subject',
+          executer: () => deleteSubjectById(id),
+          onSuccess: response => {
+            console.log('rresponse: ', response);
+            resolve(true);
+          },
+        });
+      } catch (err) {
+        console.log('error while fetching notifications', err);
+        resolve(false);
+      }
+    });
   }, []);
 
   useEffect(() => {

@@ -38,36 +38,42 @@ const useCourseStd = () => {
 
   // edit course
   const EditCourseStd = useCallback(async (id, course) => {
-    try {
-      fetcher({
-        showSuccessToast: false,
-        key: 'edit-courseStd',
-        executer: () => editCourseStdById(id, course),
-        onSuccess: response => {
-          console.log('rresponse: ', response);
-          fetchCourseStdList();
-        },
-      });
-    } catch (err) {
-      console.log('error while fetching notifications', err);
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        fetcher({
+          showSuccessToast: false,
+          key: 'edit-courseStd',
+          executer: () => editCourseStdById(id, course),
+          onSuccess: response => {
+            console.log('rresponse: ', response);
+            resolve(true);
+          },
+        });
+      } catch (err) {
+        console.log('error while fetching notifications', err);
+        resolve(false);
+      }
+    });
   }, []);
 
   // delete course by id
   const DeleteCourseStdById = useCallback(async id => {
-    try {
-      fetcher({
-        key: 'delete-courseStd',
-        showSuccessToast: false,
-        executer: () => deleteCourseStdById(id),
-        onSuccess: response => {
-          console.log('rresponse: ', response);
-          fetchCourseStdList();
-        },
-      });
-    } catch (err) {
-      console.log('error while fetching notifications', err);
-    }
+    return new Promise((resolve, reject) => {
+      try {
+        fetcher({
+          key: 'delete-courseStd',
+          showSuccessToast: false,
+          executer: () => deleteCourseStdById(id),
+          onSuccess: response => {
+            console.log('rresponse: ', response);
+            resolve(true);
+          },
+        });
+      } catch (err) {
+        console.log('error while fetching notifications', err);
+        resolve(false);
+      }
+    });
   }, []);
 
   // Determine current items based on search results or pagination

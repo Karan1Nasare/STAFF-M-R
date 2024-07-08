@@ -28,6 +28,7 @@ const useContent = () => {
         key: 'get-content',
         executer: () => getContent(searchTerm, currentPage),
         onSuccess: response => {
+          console.log('🚀 ~ fetchContentList ~ response:', response);
           const record = response?.data?.data?.data;
           setContentList(record);
           setItemsPerPage(response?.data?.data?.per_page);
@@ -76,8 +77,9 @@ const useContent = () => {
   }, []);
 
   useEffect(() => {
+    console.log('fdsced');
     fetchContentList();
-  }, []);
+  }, [currentPage]);
 
   return {
     contentList,
